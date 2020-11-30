@@ -1,7 +1,8 @@
 console.log('Initialising');
-const { AkairoClient, CommandHandler, ListenerHandler, InhibitorHandler } = require('discord-akairo');
+const { AkairoClient, CommandHandler, ListenerHandler, InhibitorHandler, Command } = require('discord-akairo');
 const { Client } = require('pg');
 const { ownerID } = require('./config')
+
 let credentials;
 try{
     credentials = require('./credentials.json');
@@ -38,8 +39,13 @@ class BotClient extends AkairoClient {
         this.commandHandler = new CommandHandler(this, {
                 directory: './commands/',
                 prefix: async message => {
-                    return (await db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix;
-                }
+                    try{
+                        return (await db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix;
+                    } catch {
+                        return ';'
+                    }
+                },
+                commandUtil: true
             }
         );
         this.inhibitorHandler = new InhibitorHandler(this, {
@@ -68,6 +74,9 @@ class BotClient extends AkairoClient {
 };
 
 const client = new BotClient();
-client.db = db
+
+client.db = db;
+client.config = require('./config');
+client.functions = client.config.functions
 
 client.login(credentials.TOKEN)

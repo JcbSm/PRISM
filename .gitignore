@@ -2,3 +2,4 @@ package-lock.json
 credentials.json
 /node_modules/
 /commands/debug.js
+/commands/Admin/Setup/config.json

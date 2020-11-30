@@ -10,10 +10,20 @@ class AddGuildListener extends Listener {
 
     async exec(guild) {
 
-        await this.client.db.query(`INSERT INTO guilds (guild_id) VALUES (${guild.id})`, (err, res) => {
-            if(res) return console.log(`Added ${guild.name} to table guilds with guild_id ${guild.id}`)
-            if(err) return console.log(`Rejoined ${guild.name}.`)
-        })
+        let client = this.client
+
+        await client.db.query(`INSERT INTO guilds (guild_id) VALUES (${guild.id})`, async (err, res) => {
+            if(res) console.log(`Added ${guild.name} to table guilds with guild_id ${guild.id}`)
+            if(err) console.log(`Rejoined ${guild.name}.`);
+
+            for(const [id, channel] of guild.channels.cache.filter(c => c.type === 'voice')) {
+                if(channel.type === 'voice') {
+                    for(const [id, member] of channel.members) {
+                        client.emit('voiceStateUpdate', member, member.voice)
+                    };
+                };
+            };
+        });
     };
 };
 

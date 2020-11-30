@@ -6,8 +6,7 @@ class DebugCommand extends Command {
             aliases: ['debug', 'test'],
             args: [
                 {
-                    id: 'str',
-                    match: 'rest'
+                    id: 'str'
                 }
             ],
             ownerOnly: true,
@@ -15,6 +14,9 @@ class DebugCommand extends Command {
     };
 
     async exec(message, args) {
+
+        console.log(__dirname.split('\\')[__dirname.split('\\').length-1])
+
         
     };
 };

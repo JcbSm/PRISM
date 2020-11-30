@@ -8,7 +8,7 @@ class PrefixCommand extends Command {
                 usage: 'prefix <prefix>',
                 content: 'Sets a new prefix for your server'
             },
-            category: 'Administration',
+            category: 'administration',
             args: [
                 {
                     id: 'prefix',
@@ -21,16 +21,25 @@ class PrefixCommand extends Command {
 
     async exec(message, args) {
 
-        await this.client.db.query(`UPDATE guilds SET prefix = '${args.prefix}' WHERE guild_id = ${message.guild.id}`, async (err, res) => {
-            if(res) {
-                message.channel.send({ embed: {
-                    description: `Set the prefix in **${message.guild.name}** to \`${args.prefix}\``
-                }});
-            } else {
-                console.log(err)
-                message.reply('Invalid prefix. Max 2 characters.')
-            }
-        });
+        if(!args.prefix) {
+            message.channel.send({ embed: {
+                description: `The prefix in **${message.guild.name}** is \`${(await this.client.db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix}\``,
+                color: this.client.config.colors.discord.blue
+            }});
+        } else {
+
+            await this.client.db.query(`UPDATE guilds SET prefix = '${args.prefix}' WHERE guild_id = ${message.guild.id}`, async (err, res) => {
+                if(res) {
+                    message.channel.send({ embed: {
+                        description: `Set the prefix in **${message.guild.name}** to \`${args.prefix}\``,
+                        color: this.client.config.colors.discord.blue
+                    }});
+                } else {
+                    console.log(err)
+                    message.reply('Invalid prefix. Max 2 characters.')
+                }
+            });
+        };
     };
 };
 

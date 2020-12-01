@@ -1,23 +1,41 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'clear',
+    aliases: [],
+    description: {
+        usage: ['[amount]'],
+        content: 'Bulk delete messages'
+    },
+    channel: 'guild',
+    typing: false,
+    clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
+    userPermissions: ['MANAGE_MESSAGES'],
+}, __dirname)
 
 class ClearCommand extends Command {
     constructor() {
-        super('clear', {
-            aliases: ['clear'],
-            description: {
-
-            },
-            category: 'moderation',
-            channel: 'guild',
-            typing: true,
-            args: [
-                {
-                    id: 'amount',
-                    type: 'integer'
-                }
-            ]
-        });
+        super(commandInfo.id, commandInfo);
     };
+
+    *args() {
+
+        const amount = yield {
+
+            type: 'integer',
+            prompt: {
+                start: message => {
+                    this.client.emit('help', message, this);
+                },
+                retry: message => {
+                    this.client.emit('help', message, this)
+                }
+            }
+        };
+
+        return { amount }
+    }
 
     async exec(message, args) {
         

@@ -1,31 +1,25 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'kick',
+    aliases: [],
+    channel: 'guild',
+    typing: false,
+    userPermissions: ['KICK_MEMBERS'],
+    clientPermissions: ['KICK_MEMBERS', 'SEND_MESSAGES'],
+    description: {
+        content: 'Kick a member from the server.', 
+        usage: [
+            '[member] (reason)',
+            '[member]'
+        ]
+    },
+}, __dirname);
 
 class KickCommand extends Command {
     constructor() {
-        super('kick', {
-            aliases: ['kick'],
-            channel: 'guild',
-            category: 'moderation',
-            typing: true,
-            userPermissions: ['KICK_MEMBERS'],
-            description: {
-                content: 'Kick a member from the server.', 
-                usage: [
-                    '[member] (reason)',
-                    '[member]'
-                ],
-                argumentOptions: [
-                    {
-                        id: 'member',
-                        options: []
-                    },
-                    {
-                        id: 'reason',
-                        options: []
-                    }
-                ]
-            },
-        });
+        super(commandInfo.id, commandInfo);
     };
 
     async *args() {
@@ -72,7 +66,7 @@ class KickCommand extends Command {
         }
 
         if(confirm === 'YES') confirm = true;
-        if(confirm === 'NO') confrim = false
+        if(confirm === 'NO') confirm = false
 
         return { member, reason, confirm }
 

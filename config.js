@@ -92,6 +92,32 @@ module.exports = {
                 }
             }
             return arr.reverse().join("")
+        },
+
+        commandOptions: function commandOptions(obj, dir) {
+
+            let options = {
+                id: obj.id,
+                aliases: obj.aliases,
+                channel: obj.channel,
+                typing: obj.typing,
+                description: obj.description,
+                clientPermissions: obj.clientPermissions,
+                userPermissions: obj.userPermissions,
+                category: dir.split(/(\\|\/)/).pop()
+            }
+
+            options.aliases.unshift(obj.id)
+
+            for(const key of Object.keys(options)) {
+                let x = options[key]
+                if(x === undefined) throw `Command Options Missing - ${key}`;
+            }
+
+            Object.assign(options, obj)
+
+            return options;
+            
         }
     }
 }

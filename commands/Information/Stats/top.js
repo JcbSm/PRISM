@@ -1,38 +1,71 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'top',
+    aliases: ['leaderboard', 'lb'],
+    channel: 'guild',
+    typing: true,
+    description: {
+        usage: ['[category] (page)', '[category] (member)'],
+        content: 'View the leaderboard for certain stats.',
+        argumentOptions: [
+            {
+                id: 'category',
+                options: [
+                    ['MESSAGES', 'MESSAGE'],
+                    ['VOICE', 'VC'],
+                    ['MUTED', 'MUTE'],
+                    ['AFK']
+                ]
+            }
+        ]
+    },
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: []
+}, __dirname)
 
 class TopCommand extends Command {
     constructor() {
-        super('top', {
-            aliases: ['top', 'leaderboard'],
-            description: {
+        super(commandInfo.id, commandInfo);
+    };
 
-            },
-            category: 'information',
-            channel: 'guild',
-            typing: true,
-            args: [
-                {
-                    id: 'category',
-                    type: [
-                        ['MESSAGES', 'MESSAGE'],
-                        ['VOICE', 'VC'],
-                        ['MUTED', 'MUTE'],
-                        ['AFK']
-                    ],
-                    default: 'MESSAGES'
+    *args() {
+
+        const category = yield {
+
+            type: [
+                ['MESSAGES', 'MESSAGE'],
+                ['VOICE', 'VC'],
+                ['MUTED', 'MUTE'],
+                ['AFK']
+            ],
+            default: 'MESSAGES',
+            prompt: {
+                start: message => {
+                    this.client.emit('help', message, this)
                 },
-                {
-                    id: 'page',
-                    default: 1
+                retry: message => {
+                    this.client.emit('help', message, this)
                 }
-            ]
-        });
+            }
+        };
+
+        let page = yield {
+            default: 1
+        };
+
+        let type;
+
+        let number = Number(page); if(isNaN(number)) type = 'string'; else { page = Math.round(page); type = 'integer' };
+
+        return { category, page, type }
     };
 
     async exec(message, args) {
 
         let [data, client] = [null, this.client]
-        let [mention, start, end, page] = [null, 0, 0, args.page];
+        let [mention, start, end, page] = [null, 0, 0, null];
         function displayValue() {};
 
         switch(args.category.toUpperCase()) {
@@ -72,6 +105,30 @@ class TopCommand extends Command {
         data.sort((a, b) => Object.values(b)[1] - Object.values(a)[1])
 
         let arr = [];
+
+        if(args.type === 'string') {
+
+            console.log(data)
+
+            let member = this.client.util.resolveMember(args.page, message.guild.members.cache);
+
+            if(member) {
+
+                let index = data.findIndex(m => m.user_id === member.id)
+                if(index >= 0 && index < data.length) {
+
+                    console.log(index)
+                    page = Math.ceil((index+1)/10)
+                } else {
+                    page = 1
+                }
+        
+            } else {
+                page = 1
+            }
+        } else {
+            page = args.page
+        }
 
         start += 10*(page-1); end += (10*(page))-1;
         if(start > data.length) return message.reply('No data.')

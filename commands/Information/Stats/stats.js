@@ -1,23 +1,40 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'stats',
+    aliases: ['stat'],
+    channel: 'guild',
+    typing: false,
+    description: {
+        usage: ['(member)'],
+        content: 'View the stats for a user'
+    },
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: []
+}, __dirname)
 
 class StatsCommand extends Command {
     constructor() {
-        super('stats', {
-            aliases: ['stats', 'stat'],
-            args: [
-                {
-                    id: 'member',
-                    type: 'member'
-                }
-            ],
-            category: 'information'
-        });
+        super(commandInfo.id, commandInfo);
     };
+
+    *args() {
+
+        const member = yield {
+
+            type: 'member',
+            default: message => message.member
+
+        }
+
+        return { member }
+
+    }
 
     async exec(message, args) {
 
-        const member = args.member ? args.member : message.member;
-        const data = (await this.client.db.query(`SELECT * FROM members WHERE user_id = ${member.id} AND guild_id = ${message.guild.id}`)).rows[0];
+        const data = (await this.client.db.query(`SELECT * FROM members WHERE user_id = ${args.member.id} AND guild_id = ${message.guild.id}`)).rows[0];
 
         if(!data) return message.reply('No data.');
 
@@ -29,7 +46,7 @@ class StatsCommand extends Command {
 
         message.channel.send({ embed: {
             title: `${message.guild.name.toUpperCase()} STATS`,
-            description: `**[${this.client.functions.levelCalc(data.xp)}] • ${member}**`,
+            description: `**[${this.client.functions.levelCalc(data.xp)}] • ${args.member}**`,
             fields: [
                 {
                     name: 'MESSAGES',
@@ -55,7 +72,7 @@ class StatsCommand extends Command {
                 this.client.config.presets.blankFieldInline
             ],
             thumbnail: {
-                url: member.user.displayAvatarURL()
+                url: args.member.user.displayAvatarURL()
             }
         }});
     };

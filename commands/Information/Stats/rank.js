@@ -1,29 +1,43 @@
 const { Command } = require('discord-akairo');
 const { loadImage, createCanvas, registerFont } = require('canvas');
 const Discord = require('discord.js')
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'rank',
+    aliases: [],
+    channel: 'giuld',
+    typing: true,
+    description: {
+        usage: ['(member)'],
+        content: 'View the level and rank of a member.'
+    },
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: []
+
+}, __dirname)
 
 class RankCommand extends Command {
     constructor() {
-        super('rank', {
-            aliases: ['rank'],
-            args: [
-                {
-                    id: 'member',
-                    type: 'member'
-                }
-            ],
-            typing: true,
-            category: 'Information'
-        });
+        super(commandInfo.id, commandInfo);
+    };
+
+    *args() {
+
+        const member = yield {
+            type:'member',
+            default: message => message.member
+        };
+
+        return { member };
+
     };
 
     async exec(message, args) {
 
-        const DB = this.client.db;
+        const [DB, member] = [this.client.db, args.member]
 
         try{
-
-            const member = args.member ? args.member : message.member
 
             const memberData = (await DB.query(`SELECT * FROM members WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)).rows[0]
             const guildData = (await DB.query(`SELECT rank_card_color FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0]

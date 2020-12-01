@@ -1,0 +1,26 @@
+{
+    "levels": {
+        "message": {
+            "text": "{member}, you just advanced to Level {level}!",
+            "type": "message"
+        },
+        "roles": {
+            "stack": true,
+            "rewards": [
+                
+            ],
+            "blacklist": [
+
+            ]
+        },
+        "channels": {
+            "mode": "blacklist",
+            "blacklist": [
+
+            ],
+            "whitelist": [
+
+            ]
+        }
+    }
+}

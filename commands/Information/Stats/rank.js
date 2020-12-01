@@ -51,7 +51,7 @@ class RankCommand extends Command {
                 main: guildData.rank_card_color
             }
 
-            registerFont('./assets/fonts/bahnschrift-main.ttf', {family: 'bahnschrift'})
+            registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'})
 
             const canvas = createCanvas(640, 192)
             const ctx = canvas.getContext('2d')

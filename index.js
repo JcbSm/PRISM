@@ -37,7 +37,7 @@ class BotClient extends AkairoClient {
         });
 
         this.commandHandler = new CommandHandler(this, {
-                directory: './commands/',
+                directory: './Commands/',
                 prefix: async message => {
                     try{
                         return (await db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix;
@@ -49,11 +49,11 @@ class BotClient extends AkairoClient {
             }
         );
         this.inhibitorHandler = new InhibitorHandler(this, {
-            directory: './inhibitors/'
+            directory: './Inhibitors/'
         });
 
         this.listenerHandler = new ListenerHandler(this, {
-            directory: './listeners/'
+            directory: './Listeners/'
         });
 
         this.commandHandler.useListenerHandler(this.listenerHandler);

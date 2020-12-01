@@ -20,19 +20,32 @@ class HelpListener extends Listener {
 
         console.log
 
-        message.channel.send({ embed: {
+        let embed = {
             title: `${type.toUpperCase()}: ${module.id.toUpperCase()}`,
             description: module.description.content,
             fields: [
                 {
                     name: 'USAGE',
                     value: (await Promise.all(module.description.usage.map(async str => `\`${await module.handler.prefix(message)}${module.id} ${str}\``))).join('\n')
-
                 },
 
             ],
             color: this.client.config.colors.discord.blue
-        }})
+        }
+
+        if(module.description.argumentOptions) {
+            for(let arg of module.description.argumentOptions) {
+
+                console.log(arg)
+                embed.fields.push({
+                    name: arg.id.toUpperCase(),
+                    value: arg.options.map(e => `- \`${e[0]}\``).join('\n'),
+                    inline: true
+                })
+            }
+        }
+
+        message.channel.send({embed: embed})
     };
 };
 

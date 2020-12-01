@@ -1,44 +1,64 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'channel',
+    aliases: ['setchannel', 'channels'],
+    description: {
+        usage: ['[option] (channel)', '[option]', ''],
+        content: 'Set which channels to be used by the bot'
+    },
+    channel: 'guild',
+    typing: true,
+    clientPermissions: ['MANAGE_CHANNELS', 'SEND_MESSAGES'],
+    userPermissions: ['ADMINISTRATOR'],
+}, __dirname)
 
 class ChannelCommand extends Command {
     constructor() {
-        super('channel', {
-            aliases: ['channel', 'setchannel', 'channels'],
-            description: {
+        super(commandInfo.id, commandInfo);
+    };
+
+    async *args() {
+
+        const option = yield {
+            
+            type: async (message, phrase) => {
+                const IDs = (await this.client.db.query(`SELECT logs_channel_id, counting_channel_id, wording_channel_id, calls_channel_id, levels_channel_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];
+        
+                let options = [
+                    ['VIEW']
+                ];
+                Object.entries(IDs).forEach(element => {
+                    options.push([element[0].replace(/_channel_id/, '').toUpperCase()]);
+                });
+        
+                for (const entry of options) {
+                    if (entry.some(t => t === phrase.toUpperCase())) {
+                        return entry[0];
+                    };
+                };
+        
+                return null;
             },
-            category: 'administration',
-            channel: 'guild',
-            args: [
-                {
-                    id: 'option',
-                    type: async (message, phrase) => {
-                        const IDs = (await this.client.db.query(`SELECT logs_channel_id, counting_channel_id, wording_channel_id, calls_channel_id, levels_channel_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];
-                
-                        let options = [
-                            ['VIEW']
-                        ];
-                        Object.entries(IDs).forEach(element => {
-                            options.push([element[0].replace(/_channel_id/, '').toUpperCase()]);
-                        });
-                
-                        for (const entry of options) {
-                            if (entry.some(t => t === phrase.toUpperCase())) {
-                                return entry[0];
-                            };
-                        };
-                
-                        return null;
-                    },
-                    default: 'VIEW'
+            default: 'VIEW',
+            prompt: {
+                start: message => {
+                    this.client.emit('help', message, this);
                 },
-                {
-                    id: 'channel',
-                    type: 'channel',
-                    match: 'rest'
-                }
-            ],
-            userPermissions: ['ADMINISTRATOR']
-        });
+                retry: message => {
+                    this.client.emit('help', message, this);
+                },
+            }
+        };
+
+        const channel = yield {
+            id: 'channel',
+            type: 'channel',
+            match: 'rest'  
+        };
+
+        return {option, channel}
     };
 
     async exec(message, args) {

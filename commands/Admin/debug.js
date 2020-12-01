@@ -1,23 +1,28 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../config').functions;
+
+const options = {
+    id: 'debug',
+    aliases: ['Bruh'],
+    description: {
+
+    },
+    channel: 'guild',
+    typing: false,
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: ['ADMINISTRATOR']
+};
+
+const commandInfo = commandOptions(options, __dirname);
 
 class DebugCommand extends Command {
     constructor() {
-        super('debug', {
-            aliases: ['debug', 'test'],
-            args: [
-                {
-                    id: 'str'
-                }
-            ],
-            ownerOnly: true,
-        });
+        super(commandInfo.id, commandInfo);
     };
 
     async exec(message, args) {
-
-        console.log(__dirname.split('\\')[__dirname.split('\\').length-1])
-
-        
+    
+        console.log(this)
     };
 };
 

@@ -1,16 +1,22 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'config',
+    aliases: ['settings', 'setup'],
+    description: {
+        usage: ['[option] [option] [value]'],
+        content: 'Configure the bot.'
+    },
+    channel: 'guild',
+    typing: true,
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: ['ADMINISTRATOR'],
+}, __dirname)
 
 class ConfigCommand extends Command {
     constructor() {
-        super('config', {
-            aliases: ['config', 'setup'],
-            description: {
-                
-            },
-            channel: 'guild',
-            category: 'administration',
-            typing: true
-        });
+        super(commandInfo.id, commandInfo)        
     };
 
     async *args(message) {
@@ -44,8 +50,6 @@ class ConfigCommand extends Command {
 
             return embed;
         }
-
-        console.log(defaultEmbed(options))
 
         function prompt(embed) {
             let sent;

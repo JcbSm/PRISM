@@ -1,10 +1,22 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'ping',
+    aliases: [],
+    description: {
+        usage: [''],
+        content: 'Ping the bot!'
+    },
+    channel: null,
+    typing: false,
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: [],
+}, __dirname)
 
 class PingCommand extends Command {
     constructor() {
-        super('ping', {
-            aliases: ['ping']
-        });
+        super(commandInfo.id, commandInfo);
     };
 
     exec(message) {

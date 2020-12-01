@@ -1,22 +1,33 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../config').functions;
+
+const commandInfo = commandOptions({
+    id: 'prefix',
+    aliases: ['setprefix'],
+    description: {
+        usage: ['[prefix]'],
+        content: 'Set the prefix for this guild'
+    },
+    channel: 'guild',
+    typing: false,
+    clientPermissions: ['SEND_MESSAGES'],
+    userPermissions: ['ADMINISTRATOR'],
+}, __dirname)
 
 class PrefixCommand extends Command {
     constructor() {
-        super('prefix', {
-            aliases: ['prefix', 'setprefix'],
-            description: {
-                usage: 'prefix <prefix>',
-                content: 'Sets a new prefix for your server'
-            },
-            category: 'administration',
-            args: [
-                {
-                    id: 'prefix',
-                    match: 'rest'
-                }
-            ],
-            userPermissions: ['ADMINISTRATOR']
-        });
+        super(commandInfo.id, commandInfo);
+    };
+
+    async *args() {
+
+        const prefix = yield {
+
+            type: 'string',
+            match: 'rest'
+        };
+
+        return { prefix }
     };
 
     async exec(message, args) {

@@ -4,3 +4,4 @@ credentials.json
 /Commands/debug.js
 /Commands/Admin/Setup/config.json
 commands/Admin/debug.js
+Commands/Admin/Settings/config.json

@@ -77,6 +77,8 @@ const client = new BotClient();
 
 client.db = db;
 client.config = require('./config');
-client.functions = client.config.functions
+client.functions = client.config.functions;
 
 client.login(credentials.TOKEN)
+
+module.exports = {client};

@@ -1,8 +1,16 @@
 module.exports = {
 
+    client: null, //Here
+
     ownerID: '227848397447626752',
 
     colors: {
+        main: async (guild) => {
+            console.log(client)
+            const color = (await client.db.query(`SELECT main_color FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].main_color
+            return color;
+        },
+
         green: '#5CB85C',
         amber: '#F0AD4E',
         red: '#D9454F',
@@ -118,6 +126,14 @@ module.exports = {
 
             return options;
             
+        },
+
+        toTitleCase: function toTitleCase(str) {
+
+            str = str.trim(); let arr = str.split("");
+            arr[0] = arr[0].toUpperCase();
+
+            return arr.join("")
         }
     }
-}
+};

@@ -81,4 +81,4 @@ client.functions = client.config.functions;
 
 client.login(credentials.TOKEN)
 
-module.exports = {client};
+module.exports = client;

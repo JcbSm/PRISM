@@ -1,5 +1,5 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../../config').functions;
+const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'stats',
@@ -53,23 +53,24 @@ class StatsCommand extends Command {
                     value: `\`${this.client.functions.groupDigits(messages)}\``,
                     inline: true,
                 },
+                this.client.config.presets.blankFieldInline,
                 {
                     name: 'VOICE',
                     value: voice,
                     inline: true
                 },
-                this.client.config.presets.blankFieldInline,
                 {
                     name: 'AFK COUNT',
                     value:`\`${afk}\``,
                     inline: true
                 },
+                
+                this.client.config.presets.blankFieldInline,
                 {
                     name: 'MUTED',
                     value: `${muted}, ${mutePercent}`,
                     inline: true
-                },
-                this.client.config.presets.blankFieldInline
+                }
             ],
             thumbnail: {
                 url: args.member.user.displayAvatarURL()

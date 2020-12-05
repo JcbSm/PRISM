@@ -1,7 +1,7 @@
 const { Command } = require('discord-akairo');
 const { loadImage, createCanvas, registerFont } = require('canvas');
 const Discord = require('discord.js')
-const { commandOptions } = require('../../../config').functions;
+const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'rank',

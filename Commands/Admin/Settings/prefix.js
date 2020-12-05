@@ -1,5 +1,5 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../../config').functions;
+const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'prefix',

@@ -19,14 +19,17 @@ class VoiceStateUpdateListener extends Listener {
             await this.client.db.query(`UPDATE members SET voice = true WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)
             this.client.emit('xp-joinVoice', oldState, newState);
             this.client.emit('stats-joinVoice', oldState, newState);
+            this.client.emit('log-voiceStateJoin', newState);
         } else if(!newState.channel && oldState.channel) {
             //Leave VC
             await this.client.db.query(`UPDATE members SET voice = false WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)
+            this.client.emit('log-voiceStateLeave', oldState);
         } else if(oldState.channel && newState.channel && newState.channel.id !== oldState.channel.id) {
             //Switch VC
             await this.client.db.query(`UPDATE members SET voice = true WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)
             this.client.emit('xp-joinVoice', oldState, newState);
             this.client.emit('stats-joinVoice', oldState, newState);
+            this.client.emit('log-voiceStateSwitch', oldState, newState);
         } else {
             //Other
             if(!(await this.client.db.query(`SELECT voice FROM members WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)).rows[0].voice) {

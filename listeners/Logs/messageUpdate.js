@@ -42,7 +42,7 @@ class LogMessageUpdateListener extends Listener {
                     icon_url: oldMessage.author.displayAvatarURL()
                 },
                 timestamp: new Date(),
-                color: this.client.config.colors.discord.blue
+                color: await this.client.config.colors.embed(newMessage.guild)
             }});
         };
     };

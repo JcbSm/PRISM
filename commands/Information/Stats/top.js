@@ -1,5 +1,5 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../../config').functions;
+const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'top',
@@ -16,7 +16,8 @@ const commandInfo = commandOptions({
                     ['MESSAGES', 'MESSAGE'],
                     ['VOICE', 'VC'],
                     ['MUTED', 'MUTE'],
-                    ['AFK']
+                    ['AFK'],
+                    ['COUNTING', 'COUNTS', 'COUNT']
                 ]
             }
         ]
@@ -31,15 +32,10 @@ class TopCommand extends Command {
     };
 
     *args() {
-
+        
         const category = yield {
 
-            type: [
-                ['MESSAGES', 'MESSAGE'],
-                ['VOICE', 'VC'],
-                ['MUTED', 'MUTE'],
-                ['AFK']
-            ],
+            type: commandInfo.description.argumentOptions[0].options,
             default: 'MESSAGES',
             prompt: {
                 start: message => {
@@ -86,7 +82,7 @@ class TopCommand extends Command {
                 break;
             case 'MUTED': 
                 data = (await this.client.db.query(`SELECT user_id, mute_minutes FROM members WHERE guild_id = ${message.guild.id}`)).rows;
-                displayValue = function displayValue(va) {
+                displayValue = function displayValue(val) {
                     if(val > 6000) return `\`${client.functions.groupDigits(Math.round(val/60))} hours\``
                     else if(val > 120) return `\`${Math.round(val/6)/10} hours\``
                     else return `\`${val} minutes\``
@@ -97,6 +93,12 @@ class TopCommand extends Command {
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``;
                 };
+                break;
+            case 'COUNTING':
+                data = (await this.client.db.query(`SELECT user_id, counting_counts, counting_last_message_url, counting_count FROM members JOIN guilds ON (guilds.guild_id = members.guild_id) WHERE members.guild_id = ${message.guild.id}`)).rows;
+                displayValue = function displayValue(val) {
+                    return `\`${client.functions.groupDigits(val)}\` • \`${Math.round((10000*val)/(data[0].counting_count))/100}%\``
+                }
                 break;
             default:
                 return message.reply('An error occurred.')
@@ -153,7 +155,8 @@ class TopCommand extends Command {
             thumbnail: {
                 url: message.guild.iconURL()
             },
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            color: await this.client.config.colors.embed(message.guild)
         }})
     };
 };

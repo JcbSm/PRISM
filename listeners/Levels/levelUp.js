@@ -17,21 +17,18 @@ class XpLevelUpListener extends Listener {
 
             const channel = await this.client.channels.fetch(channelID)
 
-            function parseText(text, member, level) {
-
-                return text.replace(/{member}/, member).replace(/{tag}/, member.user.tag).replace(/{guild}/, member.guild.name).replace(/{level}/, level);
-            };
+            const { parseText } = this.client.functions;
 
             let message;
 
             if(config.levels.message.type === 'embed') {
 
                 message = ('', {embed: {
-                    description: parseText(config.levels.message.text, member, level)
+                    description: parseText(config.levels.message.text, member)
                 }})
             } else if(config.levels.message.type === 'message') {
                 
-                message = parseText(config.levels.message.text, member, level)
+                message = parseText(config.levels.message.text, member)
             };
 
             channel.send(message);
@@ -68,8 +65,8 @@ class XpLevelUpListener extends Listener {
                     };
                 };
 
-                await member.roles.remove(removeArr);
-                await member.roles.add(add)
+                if(removeArr.length > 0) await member.roles.remove(removeArr);
+                if(add) await member.roles.add(add)
             }
         };
     };

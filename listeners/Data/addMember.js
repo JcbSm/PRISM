@@ -8,18 +8,18 @@ class AddMemberListener extends Listener {
         });
     };
 
-    async exec(member) {
+    async exec(userID, guildID) {
 
         const DB = this.client.db;
 
-        if(!(await DB.query(`SELECT user_id FROM users WHERE user_id = ${member.id}`)).rows[0]) {
-            await DB.query(`INSERT INTO users (user_id) VALUES (${member.id});`);
-            console.log(`Added ${member.user.tag} to users with user_id ${member.id}`)
+        if(!(await DB.query(`SELECT user_id FROM users WHERE user_id = ${userID}`)).rows[0]) {
+            await DB.query(`INSERT INTO users (user_id) VALUES (${userID});`);
+            console.log(`Added to users with user_id ${userID}`)
         }
 
-        DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${member.id}, ${member.guild.id});`, (err, res) => {
+        DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${userID}, ${guildID});`, (err, res) => {
             if(err) return console.log(err)
-            console.log(`Added ${member.user.tag} to members with user_id ${member.id} and guild_id ${member.guild.id}`)
+            console.log(`Added to members with user_id ${userID} and guild_id ${guildID}`)
         })
     };
 };

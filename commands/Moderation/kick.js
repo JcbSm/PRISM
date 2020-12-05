@@ -1,5 +1,5 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../config').functions;
+const { commandOptions } = require('../../index');
 
 const commandInfo = commandOptions({
     id: 'kick',
@@ -52,7 +52,7 @@ class KickCommand extends Command {
             prompt: {
                 start: { embed: {
                     title: 'CONFIRM',
-                    description: `Are you sure you want to kick ${member}? (Y/N)`,
+                    description: `Are you sure you want to kick ${member}? **(Y/N)**`,
                     fields: [
                         {
                             name: 'REASON',
@@ -65,8 +65,7 @@ class KickCommand extends Command {
             match: 'none'
         }
 
-        if(confirm === 'YES') confirm = true;
-        if(confirm === 'NO') confirm = false
+        confirm = confirm === 'YES' ? true : confirm === 'NO' ? false : null
 
         return { member, reason, confirm }
 
@@ -76,9 +75,11 @@ class KickCommand extends Command {
 
         let reason = `\`${args.reason}\``
 
+        const config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config);
+
         if(args.confirm) {
             
-            await args.member.kick(args.reason)
+            //await args.member.kick(args.reason)
     
             message.channel.send({ embed: {
 
@@ -96,8 +97,8 @@ class KickCommand extends Command {
 
             args.member.user.send({ embed: {
 
-                title: 'ALERT',
-                description: `You have been kicked from **${message.guild.name}**.`,
+                title: 'KICK',
+                description: await this.client.functions.parseText(config.messages.warnings.kick, args.member),
                 fields: [
                     {
                         name: 'REASON',

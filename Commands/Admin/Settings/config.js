@@ -1,5 +1,6 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../../config').functions;
+const { commandOptions } = require('../../../index');
+const MemberCommand = require('../../Information/member');
 
 const commandInfo = commandOptions({
     id: 'config',
@@ -23,11 +24,14 @@ class ConfigCommand extends Command {
 
         let config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config);
 
-        let [setting, option, optionTwo, value, embed, client] = [null, null, null, null, null, this.client]
+        let [setting, option, optionTwo, value, embed, client] = [null, null, null, null, null, this.client];
 
-        let options = [
-            ['LEVELS', 'LEVEL', '1'],
-            ['CHANNELS', 'CHANNEL', '2']
+        let variables = [
+            { name: 'Mention', value: '{member}' },
+            { name: 'User tag', value: '{tag}' },
+            { name: 'Guild name', value: '{guild}' },
+            { name: 'Level', value: '{level}' },
+            { name: 'XP', value: '{xp}'}
         ];
 
         let globalEmbedOptions = {
@@ -36,7 +40,7 @@ class ConfigCommand extends Command {
                 text: 'Type \'cancel\' to cancel.',
             },
             timestamp: Date.now(),
-            color: this.client.config.colors.discord.blue
+            color: await this.client.config.colors.embed(message.guild)
         };
 
         function defaultEmbed(options) {
@@ -52,7 +56,7 @@ class ConfigCommand extends Command {
         }
 
         function prompt(embed) {
-            let sent;
+
             return {
                 start: () => {
                     return embed;
@@ -88,6 +92,12 @@ class ConfigCommand extends Command {
                 time: 30*1000,
             }
         }
+        
+        let options = [
+            ['LEVELS', 'LEVEL', '1'],
+            ['MESSAGES', 'MESSAGE', 'MSG', '2'],
+            ['ROLES', '3']
+        ];
 
         setting = yield {
 
@@ -144,13 +154,6 @@ class ConfigCommand extends Command {
                                 break;
 
                             case 'TEXT':
-
-                                let variables = [
-                                    { name: 'Mention', value: '{member}' },
-                                    { name: 'User tag', value: '{tag}' },
-                                    { name: 'Guild name', value: '{guild}' },
-                                    { name: 'Level', value: '{level}' }
-                                ]
 
                                 embed = { embed: {
                                     title: 'LEVEL-UP MESSAGE',
@@ -364,6 +367,179 @@ class ConfigCommand extends Command {
                 }
 
                 break;
+        
+            case 'MESSAGES': 
+
+                options = [
+                    ['EMBEDS', 'EMBED', '1'],
+                    ['WARNINGS', 'WARNS', 'WARNING', 'WARN', '2']
+                ]
+
+                option = yield {
+
+                    type: options,
+                    prompt: prompt(defaultEmbed(options))
+                };
+
+                switch (option) {
+
+                    case 'EMBEDS':
+
+                        options = [
+                            ['COLOR', 'COLOUR', '1']
+                        ];
+                        
+                        optionTwo = yield {
+
+                            type: options,
+                            prompt: prompt(defaultEmbed(options))
+                        };
+
+                        switch (optionTwo) {
+
+                            case 'COLOR':
+
+                                embed = { embed: {
+                                    title: 'TYPE A COLOR',
+                                    description: 'Any resolveable color.'
+                                }};
+
+                                Object.assign(embed.embed, globalEmbedOptions);
+
+                                value = yield {
+
+                                    type: 'string',
+                                    match: 'rest',
+                                    prompt: prompt(embed)
+
+                                };
+
+                                break;
+
+                        }
+
+                        break;
+
+                    case 'WARNINGS':
+
+                        options = [
+                            ['MUTE', 'MUTED', '1'],
+                            ['KICK', 'KICKED', '2']
+                        ]
+
+                        optionTwo = yield {
+                            type: options,
+                            prompt: prompt(defaultEmbed(options))
+                        };
+
+                        switch (optionTwo) {
+
+                            case 'MUTE':
+
+                                embed = { embed: {
+                                    title: 'MUTE WARNING MESSAGE',
+                                    description: 'Set the text that will be sent to a user when they are muted in this server.',
+                                    fields: [
+                                        {
+                                            name: 'VARIABLES',
+                                            value: variables.map(v => `\`${v.value}\` : ${v.name}`).join('\n')
+                                        }
+                                    ],
+                                }};
+
+                                Object.assign(embed.embed, globalEmbedOptions)
+
+                                value = yield {
+
+                                    type: 'string',
+                                    match: 'rest',
+                                    prompt: prompt(embed)
+                                    
+                                };
+
+                                break;
+
+                            case 'KICK':
+
+                                embed = { embed: {
+                                    title: 'KICK WARNING MESSAGE',
+                                    description: 'Set the text that will be sent to a user when they are muted in this server.',
+                                    fields: [
+                                        {
+                                            name: 'VARIABLES',
+                                            value: variables.map(v => `\`${v.value}\` : ${v.name}`).join('\n')
+                                        }
+                                    ],
+                                }};
+
+                                Object.assign(embed.embed, globalEmbedOptions)
+
+                                value = yield {
+
+                                    type: 'string',
+                                    match: 'rest',
+                                    prompt: prompt(embed)
+                                    
+                                };
+
+                                break;
+                        };
+
+                        break;
+                }
+
+                break;
+            
+            case 'ROLES': 
+
+                options = [
+                    ['SEPARATORS', 'SPLITTERS', '1']
+                ];
+
+                option = yield {
+
+                    type: options,
+                    prompt: prompt(defaultEmbed(options))
+                };
+
+                switch (option) {
+
+                    case 'SEPARATORS':
+
+                        let currentRoles = config.roles.separators
+                                    
+                        currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `<@&${r}>`).join('\n')}` : '`N/A`'
+
+                        embed = { embed: {
+                            title: 'SET SEPARATOR ROLES',
+                            description: 'Set roles which will be given/removed if a member has roles inbetween them.\nSeperate arguments with a \`,\`\n\n*To add a separator role:*\n`add:[role]`\n\n*To remove a separator role:*\n`remove:[role]`',
+                            fields: [
+                                {
+                                    name: 'EXAMPLES',
+                                    value: '`add:GAME ROLES, add:227848397447626752, remove:@MOD ROLES`'
+                                },
+                                {
+                                    name: 'CURRENT ROLES',
+                                    value: currentRoles
+                                }
+                            ]
+                        }};
+
+                        Object.assign(embed.embed, globalEmbedOptions)
+
+                        value = yield {
+
+                            type: 'string',
+                            match: 'rest',
+                            prompt: prompt(embed)
+                        };
+
+                        break;
+
+                }
+
+                break;
+        
         };
 
         return { setting, option, optionTwo, value };
@@ -406,9 +582,13 @@ class ConfigCommand extends Command {
 
                         } else if(args.optionTwo === 'REWARDS') {
 
+                            let [add, remove, unresolved] = [[], [], []];
+
                             let roles = config.levels.roles.rewards
 
-                            let [add, remove, unresolved] = [[], [], []];
+                            for(const role of roles) {
+                                if(!message.guild.roles.cache.get(role.id)) remove.push(role.id);
+                            }
 
                             let arr = args.value.split(',');
 
@@ -545,7 +725,6 @@ class ConfigCommand extends Command {
                                 throw 'invalid input';
                             };
 
-                            console.log(val)
                             config.levels.channels.whitelist = whitelist;
 
                         };
@@ -553,9 +732,113 @@ class ConfigCommand extends Command {
                     };
 
                     break;
+
+                case 'MESSAGES':
+
+                    if(args.option === 'EMBEDS') {
+
+                        if(args.optionTwo === 'COLOR') {
+
+                            let color = this.client.functions.resolveHex(args.value.toLowerCase());
+                            //console.log(color)
+
+                            if(color) { 
+
+                                config.messages.embeds.color = color;
+                                val = `\`${color}\``
+
+                            } else {
+                                throw 'invalid input'
+                            }
+
+                        } 
+
+                    } else if( args.option === 'WARNINGS') {
+
+                        if(args.optionTwo === 'MUTE') {
+
+                            config.messages.warnings.mute = args.value;
+                            val = args.value;
+
+                        } else if(args.optionTwo === 'KICK') {
+
+                            config.messages.warnings.kick = args.value;
+                            val = args.value;
+
+                        }
+
+                    }
+
+                    break;
+            
+                case 'ROLES': 
+
+                    if(args.option === 'SEPARATORS') {
+                        try{
+                            
+                        let [ add, remove, unresolved, role ] = [[], [], []];
+
+                        let roles = config.roles.separators;
+                        
+                        for(const id of roles) {
+                            if(!message.guild.roles.cache.get(id)) remove.push(id);
+                        }
+
+                        let values = args.value.split(",");
+
+                        for(let value of values) {
+
+                            value = value.trim();
+                            
+                            if(/^(add|remove|rm):.+/gi.test(value)) {
+
+                                let arr = value.split(":");
+                                
+                                if(arr[0].toLowerCase() === 'add') {
+                                    role = this.client.util.resolveRole(arr[1], message.guild.roles.cache);
+                                    if(role) {add.push(role.id)} else {unresolved.push(value)}
+                                } else if(arr[0].toLowerCase() === 'remove' || arr[0].toLowerCase() === 'rm') {
+                                    role = this.client.util.resolveRole(arr[1], message.guild.roles.cache);
+                                    if(role) {remove.push(role.id)} else {unresolved.push(value)}
+                                }
+
+                            } else {
+                                unresolved.push(value)
+                            }
+                            
+                        }
+                        
+                        for(let i of add) {
+
+                            if(!roles.includes(i)) {
+                                roles.push(i)
+                            } else {
+                                add.splice(add.indexOf(i))
+                            }
+                        };
+
+                        for(let i of remove) {
+
+                            if(roles.includes(i)) {
+                                roles = roles.filter(r => r !== i)
+                            } else {
+                                remove.splice(remove.indexOf(i))
+                            }
+                        }
+
+                        config.roles.separators = roles
+                        val = `Added/Removed the following separator roles:\n\n**Added**\n${add.map(r => `<@&${r}>`).join('\n')}\n\n**Removed**\n${remove.map(r =>`<@&${r}>`).join('\n')}\n\n**Unresolved**\n${unresolved.join('\n')}`
+
+
+                        //console.log(roles)
+                    }catch(e) {console.log(e)}
+                    }
+
+                    break;
             }
 
         } catch (err) {
+            console.log(err)
 
             if(err === 'invalid input') {
                 return message.channel.send('Invalid input.')
@@ -568,14 +851,14 @@ class ConfigCommand extends Command {
             fields: [
                 {
                     name: 'CHANGED',
-                    value: `**\`${args.setting} ${args.option} ${args.optionTwo}\`**`
+                    value: args.optionTwo ? `**\`${args.setting} ${args.option} ${args.optionTwo}\`**` : `**\`${args.setting} ${args.option}\`**`
                 },
                 {
                     name: 'VALUE',
                     value: val
                 }
             ], 
-            color: this.client.config.colors.discord.blue
+            color: await this.client.config.colors.embed(message.guild)
         }});
     };
 };

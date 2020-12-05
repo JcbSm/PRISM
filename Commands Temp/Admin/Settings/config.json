@@ -1,0 +1,38 @@
+{
+    "levels": {
+        "message": {
+            "text": "{member}, you just advanced to Level {level}!",
+            "type": "message"
+        },
+        "roles": {
+            "stack": true,
+            "rewards": [
+                
+            ],
+            "blacklist": [
+
+            ]
+        },
+        "channels": {
+            "mode": "blacklist",
+            "blacklist": [
+
+            ],
+            "whitelist": [
+
+            ]
+        }
+    },
+    "messages": {
+        "embeds": {
+            "color": "#7289DA"
+        },
+        "warnings": {
+            "mute": "You have been muted in **{guild}**",
+            "kick": "You have been kicked from **{guild}**"
+        }
+    },
+    "roles": {
+        "separators": []
+    }
+}

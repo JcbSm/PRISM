@@ -41,6 +41,23 @@ try{
     testing = false;
 }
 
+const db = new Client({
+    connectionString: credentials.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
+
+(async function() {
+    console.log('Connecting to DB');
+    try{
+        await db.connect();
+        console.log('Connection established');
+    } catch (error) {
+        console.log(error);
+    };
+}());
+
 class BotClient extends AkairoClient {
     constructor() {
         super({
@@ -91,22 +108,7 @@ class BotClient extends AkairoClient {
 
 const client = new BotClient();
 
-client.db = new Client({
-    connectionString: credentials.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});;
-
-(async function() {
-    console.log('Connecting to DB');
-    try{
-        await client.db.connect();
-        console.log('Connection established');
-    } catch (error) {
-        console.log(error);
-    };
-}());
+client.db = db;
 
 client.config = {
 

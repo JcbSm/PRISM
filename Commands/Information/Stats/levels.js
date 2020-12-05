@@ -85,7 +85,8 @@ class LevelsCommand extends Command {
             description: arr.join('\n'),
             footer: {
                 text: `Page ${page} | ${start+1} - ${end+1} of ${members.length}`
-            }
+            },
+            color: await this.client.config.colors.embed(message.guild)
         }})
     };
 };

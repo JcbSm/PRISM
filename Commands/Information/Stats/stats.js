@@ -74,7 +74,8 @@ class StatsCommand extends Command {
             ],
             thumbnail: {
                 url: args.member.user.displayAvatarURL()
-            }
+            },
+            color: await this.client.config.colors.embed(message.guild)
         }});
     };
 };

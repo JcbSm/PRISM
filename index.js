@@ -32,11 +32,13 @@ module.exports = {
 const { AkairoClient, CommandHandler, ListenerHandler, InhibitorHandler } = require('discord-akairo');
 const { Client } = require('pg');
 
-let credentials;
+let [credentials, testing] = [];
 try{
     credentials = require('./credentials.json');
+    testing = true;
 } catch {
-    credentials = process.env
+    credentials = process.env;
+    testing = false;
 }
 
 class BotClient extends AkairoClient {
@@ -51,6 +53,7 @@ class BotClient extends AkairoClient {
         this.commandHandler = new CommandHandler(this, {
                 directory: './Commands/',
                 prefix: async message => {
+                    if(testing) return 't;'
                     try{
                         return (await db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix;
                     } catch {

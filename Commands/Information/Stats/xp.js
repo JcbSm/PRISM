@@ -36,11 +36,11 @@ class XpCommand extends Command {
 
         const { xp, xp_messages, xp_minutes } = (await this.client.db.query(`SELECT xp, xp_messages, xp_minutes FROM members WHERE user_id = ${args.member.id} AND guild_id = ${args.member.guild.id}`)).rows[0]
         const level = this.client.functions.levelCalc(xp);
-        const [ max, current ] = [ xpCalc(level+1), xp-xpCalc(level) ];
+        const [ max, min, current ] = [ xpCalc(level+1), xpCalc(level), xp-xpCalc(level) ];
 
         message.channel.send({ embed: {
             title: `LEVEL [${level}]`,
-            description: `\`\`\`${groupDigits(current)} / ${groupDigits(max)}\`\`\``,
+            description: `\`\`\`${groupDigits(current)} / ${groupDigits(max-min)}\`\`\``,
             fields: [
                 {
                     name: 'TOTAL XP',

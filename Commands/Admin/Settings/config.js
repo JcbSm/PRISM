@@ -10,7 +10,7 @@ const commandInfo = commandOptions({
         content: 'Configure the bot.'
     },
     channel: 'guild',
-    typing: true,
+    typing: false,
     clientPermissions: ['SEND_MESSAGES'],
     userPermissions: ['ADMINISTRATOR'],
 }, __dirname)

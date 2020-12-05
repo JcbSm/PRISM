@@ -39,8 +39,8 @@ class RankCommand extends Command {
 
         try{
 
-            const memberData = (await DB.query(`SELECT * FROM members WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)).rows[0]
-            const guildData = (await DB.query(`SELECT rank_card_color FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0]
+            const members = (await DB.query(`SELECT * FROM members WHERE guild_id = ${member.guild.id}`)).rows
+            const memberData = members.find(u => u.user_id === member.id)
 
             //Colours
             const colors = {
@@ -48,7 +48,7 @@ class RankCommand extends Command {
                 highlight: '#ffffff',
                 highlightDark: '#ababab',
                 border: '#1c1c1c',
-                main: guildData.rank_card_color
+                main: await this.client.config.colors.embed(message.guild)
             }
 
             registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'})
@@ -56,7 +56,7 @@ class RankCommand extends Command {
             const canvas = createCanvas(640, 192)
             const ctx = canvas.getContext('2d')
 
-            let rank = 0;
+            let rank = members.sort((a, b) => b.xp - a.xp).findIndex(u => u.user_id = member.id)+1;
 
             const avatar = await loadImage(member.user.displayAvatarURL({size: 128, format: 'png'}));
             let statusColor;

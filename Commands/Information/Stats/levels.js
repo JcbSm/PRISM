@@ -77,7 +77,7 @@ class LevelsCommand extends Command {
             } catch(error) {
                 mention = (await this.client.users.fetch(members[i].user_id)).tag;
             }
-            arr.push(`\`${pad(i+1, 2)}.\`• \`Lvl [${pad(levelCalc(members[i].xp), 2)}]\` • ${mention} • \`${groupDigits(members[i].xp)} xp\``);
+            arr.push(`\`${pad(i+1, 2)}.\`• \`Lvl [${pad(this.client.functions.levelCalc(members[i].xp), 2)}]\` • ${mention} • \`${groupDigits(members[i].xp)} xp\``);
         };
 
         message.channel.send({ embed: {

@@ -56,7 +56,7 @@ class RankCommand extends Command {
             const canvas = createCanvas(640, 192)
             const ctx = canvas.getContext('2d')
 
-            let rank = members.sort((a, b) => b.xp - a.xp).findIndex(u => u.user_id = member.id)+1;
+            let rank = members.sort((a, b) => b.xp - a.xp).findIndex(u => u.user_id === member.id)+1;
 
             const avatar = await loadImage(member.user.displayAvatarURL({size: 128, format: 'png'}));
             let statusColor;

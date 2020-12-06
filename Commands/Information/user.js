@@ -65,7 +65,7 @@ class UserInfoCommand extends Command {
                 },
                 {
                     name: 'ACTIVITY',
-                    value: user.presence.activities[0].type === 'CUSTOM_STATUS' ? user.presence.activities[0].state : user.presence.activities[0].name,
+                    value: user.presence.activities[0] ? user.presence.activities[0].type === 'CUSTOM_STATUS' ? user.presence.activities[0].state : user.presence.activities[0].name : '`null`',
                     inline: true
                 },
                 {

@@ -39,7 +39,7 @@ class MemberInfoCommand extends Command {
 
         let highestRole;
         if(config.roles.separators.length !== 0) {
-            highestRole = member.roles.cache.filter(r => !config.roles.separators.includes(r.id)).sort((a,b) => b.rawPosition - a.rawPotition).first();
+            highestRole = member.roles.cache.filter(r => !config.roles.separators.includes(r.id)).sort((a,b) => b.rawPosition - a.rawPosition).first();
         } else {
             highestRole = member.roles.highest
         }

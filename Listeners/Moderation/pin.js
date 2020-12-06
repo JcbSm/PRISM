@@ -54,7 +54,7 @@ class PinListener extends Listener {
 
         if(embed.fields.length % 3 !== 0) {
             for(let i in Array.from({length: 3-(embed.fields.length % 3)})) {
-                embed.fields.push(this.client.config.presets.blankFieldInlin)
+                embed.fields.push(this.client.config.presets.blankFieldInline)
             }
         }
 

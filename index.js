@@ -109,7 +109,7 @@ class BotClient extends AkairoClient {
 const client = new BotClient();
 
 client.db = db;
-
+client.testing = testing;
 client.config = {
 
         colors: {

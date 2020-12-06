@@ -9,7 +9,7 @@ class TestingInhibitor extends Inhibitor {
 
     exec(message) {
 
-        return (message.guild.id === '569556194612740115');
+        return (this.client.testing && message.guild.id !== '569556194612740115');
     };
 };
 

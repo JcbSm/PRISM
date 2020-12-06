@@ -24,7 +24,7 @@ class ChannelCommand extends Command {
         const option = yield {
             
             type: async (message, phrase) => {
-                const IDs = (await this.client.db.query(`SELECT logs_channel_id, counting_channel_id, wording_channel_id, calls_channel_id, levels_channel_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];
+                const IDs = (await this.client.db.query(`SELECT logs_channel_id, counting_channel_id, wording_channel_id, calls_channel_id, levels_channel_id, pins_channel_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];
         
                 let options = [
                     ['VIEW']
@@ -63,7 +63,6 @@ class ChannelCommand extends Command {
 
     async exec(message, args) {
         try{
-            console.log(args.option)
 
         const val = args.channel ? args.channel.id : null
 
@@ -78,7 +77,7 @@ class ChannelCommand extends Command {
                 const IDs = (await this.client.db.query(`SELECT
                     logs_channel_id, counting_channel_id,
                     wording_channel_id, calls_channel_id,
-                    levels_channel_id
+                    levels_channel_id, pins_channel_id
                     FROM guilds WHERE guild_id = ${message.guild.id}
                 `)).rows[0];
     
@@ -126,6 +125,12 @@ class ChannelCommand extends Command {
                     if(validateChannel(args.channel, 'text')) return message.reply('Invalid channel type.');
                 };
                 await this.client.db.query(`UPDATE guilds SET levels_channel_id = ${val} WHERE guild_id = ${message.guild.id}`);
+                break;
+            case 'PINS':
+                if(args.channel) {
+                    if(validateChannel(args.channel, 'text')) return message.reply('Invalid channel type.');
+                };
+                await this.client.db.query(`UPDATE guilds SET pins_channel_id = ${val} WHERE guild_id = ${message.guild.id}`);
                 break;
             default:
                 return message.reply('Unknown option')

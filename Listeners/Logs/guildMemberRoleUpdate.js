@@ -10,6 +10,7 @@ class LogGuildMemberRoleUpdateListener extends Listener {
 
     async exec(oldMember, newMember) {
 
+        const channelID = (await this.client.db.query(`SELECT logs_channel_id FROM guilds WHERE guild_id = ${newMember.guild.id}`)).rows[0].logs_channel_id;
         
         if(channelID) {
 

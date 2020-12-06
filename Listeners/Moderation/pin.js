@@ -9,7 +9,6 @@ class PinListener extends Listener {
     };
 
     async exec(message, channel) {
-        console.log(message)
 
         let embed = {
             description: message.content,
@@ -25,9 +24,6 @@ class PinListener extends Listener {
                     inline: true
                 },
             ],
-            // thumbnail: {
-            //     url: message.author.displayAvatarURL()
-            // },
             author: {
                 name: message.author.tag,
                 icon_url: message.author.displayAvatarURL()

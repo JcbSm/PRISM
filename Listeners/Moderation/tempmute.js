@@ -10,6 +10,8 @@ class TempMuteListener extends Listener {
 
     async exec(member) {
 
+        console.log(`Starting tempmute count for ${member.user.tag} in ${member.guild.name}`)
+
         let client = this.client
 
         let interval = setInterval(async function() {
@@ -27,7 +29,10 @@ class TempMuteListener extends Listener {
                 }});
                 clearInterval(interval)
             } else {
-                if(!member.roles.cache.has(mute_role_id)) member.roles.add(mute_role_id);
+                if(!member.roles.cache.has(mute_role_id)) {
+                    member.roles.add(mute_role_id)
+                    console.log('Remuted ' + member.user.tag)
+                };
             }
 
         }, 20000);

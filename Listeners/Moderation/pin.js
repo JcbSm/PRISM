@@ -20,7 +20,7 @@ class PinListener extends Listener {
                 },
                 {
                     name: 'CHANNEL',
-                    value: `${message.channel}`,
+                    value: `${message.channel}  [\`\[JUMP\]\`](${message.url})`,
                     inline: true
                 },
             ],

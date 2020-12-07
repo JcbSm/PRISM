@@ -17,18 +17,16 @@ class XpLevelUpListener extends Listener {
 
             const channel = await this.client.channels.fetch(channelID)
 
-            const { parseText } = this.client.functions;
-
             let message;
 
             if(config.levels.message.type === 'embed') {
 
                 message = ('', {embed: {
-                    description: parseText(config.levels.message.text, member)
+                    description: this.client.functions.parseText(config.levels.message.text, member)
                 }})
             } else if(config.levels.message.type === 'message') {
                 
-                message = parseText(config.levels.message.text, member)
+                message = this.client.functions.parseText(config.levels.message.text, member)
             };
 
             channel.send(message);

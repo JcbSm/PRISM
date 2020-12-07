@@ -134,7 +134,7 @@ class MuteCommand extends Command {
                 this.client.emit('mod-tempmute', args.member);
             };
 
-            message.member.roles.add(args.mute_role_id)
+            args.member.roles.add(args.mute_role_id)
 
             args.member.user.send({ embed: {
                 title: 'WARNING',

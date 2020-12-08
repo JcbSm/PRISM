@@ -34,7 +34,6 @@ class UserInfoCommand extends Command {
     async exec(message, args) {
 
         const user = args.user;
-        console.log(user.presence.activities)
 
         let embed = {
             title: 'USER INFO',
@@ -75,11 +74,12 @@ class UserInfoCommand extends Command {
                 },
                 {
                     name: 'REGISTERED',
-                    value: `\`${new moment(user.creadtedAt).format('DD MMM YYYY')}\``,
+                    value: `\`${new moment(user.createdTimestamp).format('DD MMM YYYY')}\``,
                     inline: true
                 }
             ],
-            color: message.guild ? await this.client.config.colors.embed(message.guild) : null
+            color: message.guild ? await this.client.config.colors.embed(message.guild) : null,
+            timestamp: Date.now()
         };
 
         message.channel.send({ embed: embed });

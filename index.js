@@ -70,11 +70,10 @@ class BotClient extends AkairoClient {
         this.commandHandler = new CommandHandler(this, {
                 directory: './Commands/',
                 prefix: async message => {
-                    if(testing) return 't;'
                     try{
                         return (await db.query(`SELECT prefix FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].prefix;
                     } catch(err) {
-                        console.log(err)
+                        //console.log(err)
                         return ';'
                     }
                 },

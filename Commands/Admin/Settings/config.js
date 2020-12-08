@@ -493,7 +493,8 @@ class ConfigCommand extends Command {
             case 'ROLES': 
 
                 options = [
-                    ['SEPARATORS', 'SPLITTERS', '1']
+                    ['SEPARATORS', 'SPLITTERS', '1'],
+                    ['JOIN', 'JOINROLES', 'INITIAL', '2']
                 ];
 
                 option = yield {
@@ -502,17 +503,51 @@ class ConfigCommand extends Command {
                     prompt: prompt(defaultEmbed(options))
                 };
 
+                let currentRoles;
+
                 switch (option) {
 
                     case 'SEPARATORS':
 
-                        let currentRoles = config.roles.separators
+                        currentRoles = config.roles.separators
                                     
                         currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `<@&${r}>`).join('\n')}` : '`N/A`'
 
                         embed = { embed: {
                             title: 'SET SEPARATOR ROLES',
                             description: 'Set roles which will be given/removed if a member has roles inbetween them.\nSeperate arguments with a \`,\`\n\n*To add a separator role:*\n`add:[role]`\n\n*To remove a separator role:*\n`remove:[role]`',
+                            fields: [
+                                {
+                                    name: 'EXAMPLES',
+                                    value: '`add:Newbie ROLES, add:227848397447626752, remove:@Players`'
+                                },
+                                {
+                                    name: 'CURRENT ROLES',
+                                    value: currentRoles
+                                }
+                            ]
+                        }};
+
+                        Object.assign(embed.embed, globalEmbedOptions)
+
+                        value = yield {
+
+                            type: 'string',
+                            match: 'rest',
+                            prompt: prompt(embed)
+                        };
+
+                        break;
+
+                    case 'JOIN':
+
+                        currentRoles = config.roles.join
+                                    
+                        currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `<@&${r}>`).join('\n')}` : '`N/A`'
+
+                        embed = { embed: {
+                            title: 'SET JOIN ROLES',
+                            description: 'Set roles which will be given when a member joins the server.\nSeperate arguments with a \`,\`\n\n*To add a role:*\n`add:[role]`\n\n*To remove a role:*\n`remove:[role]`',
                             fields: [
                                 {
                                     name: 'EXAMPLES',
@@ -535,7 +570,6 @@ class ConfigCommand extends Command {
                         };
 
                         break;
-
                 }
 
                 break;
@@ -547,7 +581,7 @@ class ConfigCommand extends Command {
 
     async exec(message, args) {
 
-        let config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config)
+        let config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config);
         let val;
 
         try {
@@ -774,7 +808,6 @@ class ConfigCommand extends Command {
                 case 'ROLES': 
 
                     if(args.option === 'SEPARATORS') {
-                        try{
                             
                         let [ add, remove, unresolved, role ] = [[], [], []];
 
@@ -829,9 +862,67 @@ class ConfigCommand extends Command {
                         config.roles.separators = roles
                         val = `Added/Removed the following separator roles:\n\n**Added**\n${add.map(r => `<@&${r}>`).join('\n')}\n\n**Removed**\n${remove.map(r =>`<@&${r}>`).join('\n')}\n\n**Unresolved**\n${unresolved.join('\n')}`
 
+                    } else if(args.option === 'JOIN') {
 
-                        //console.log(roles)
-                    }catch(e) {console.log(e)}
+                        try{
+                            
+                            let [ add, remove, unresolved, role ] = [[], [], []];
+    
+                            let roles = config.roles.join;
+                            
+                            for(const id of roles) {
+                                if(!message.guild.roles.cache.get(id)) remove.push(id);
+                            }
+    
+                            let values = args.value.split(",");
+    
+                            for(let value of values) {
+    
+                                value = value.trim();
+                                
+                                if(/^(add|remove|rm):.+/gi.test(value)) {
+    
+                                    let arr = value.split(":");
+                                    
+                                    if(arr[0].toLowerCase() === 'add') {
+                                        role = this.client.util.resolveRole(arr[1], message.guild.roles.cache);
+                                        if(role) {add.push(role.id)} else {unresolved.push(value)}
+                                    } else if(arr[0].toLowerCase() === 'remove' || arr[0].toLowerCase() === 'rm') {
+                                        role = this.client.util.resolveRole(arr[1], message.guild.roles.cache);
+                                        if(role) {remove.push(role.id)} else {unresolved.push(value)}
+                                    }
+    
+                                } else {
+                                    unresolved.push(value)
+                                }
+                                
+                            }
+                            
+                            for(let i of add) {
+    
+                                if(!roles.includes(i)) {
+                                    roles.push(i)
+                                } else {
+                                    add.splice(add.indexOf(i))
+                                }
+                            };
+    
+                            for(let i of remove) {
+    
+                                if(roles.includes(i)) {
+                                    roles = roles.filter(r => r !== i)
+                                } else {
+                                    remove.splice(remove.indexOf(i))
+                                }
+                            }
+    
+                            config.roles.join = roles
+                            val = `Added/Removed the following join roles:\n\n**Added**\n${add.map(r => `<@&${r}>`).join('\n')}\n\n**Removed**\n${remove.map(r =>`<@&${r}>`).join('\n')}\n\n**Unresolved**\n${unresolved.join('\n')}`
+    
+    
+                            //console.log(roles)
+                        }catch(e) {console.log(e)}
+
                     }
 
                     break;

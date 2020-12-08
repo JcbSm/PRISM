@@ -8,10 +8,12 @@ class XpLevelUpListener extends Listener {
         });
     };
 
-    async exec(member, xp) {
+    async exec(member, xp, broadcast) {
 
         const data = (await this.client.db.query(`SELECT levels_channel_id, config FROM guilds WHERE guild_id = ${member.guild.id}`)).rows[0];
         const [channelID, config, level] = [data.levels_channel_id, JSON.parse(data.config), this.client.functions.levelCalc(xp)];
+
+        // console.log(await this.client.functions.parseText(config.levels.message.text, member))
 
         if(channelID) {
 
@@ -22,14 +24,14 @@ class XpLevelUpListener extends Listener {
             if(config.levels.message.type === 'embed') {
 
                 message = ('', {embed: {
-                    description: this.client.functions.parseText(config.levels.message.text, member)
+                    description: await this.client.functions.parseText(config.levels.message.text, member)
                 }})
             } else if(config.levels.message.type === 'message') {
                 
-                message = this.client.functions.parseText(config.levels.message.text, member)
+                message = await this.client.functions.parseText(config.levels.message.text, member)
             };
 
-            channel.send(message);
+            broadcast ? channel.send(message) : '';
 
         };
 
@@ -46,6 +48,8 @@ class XpLevelUpListener extends Listener {
 
                     if(role.level <= level) arr.push(role.id)
                 };
+
+                console.log(arr)
 
                 member.roles.add(arr);
 

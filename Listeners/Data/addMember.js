@@ -17,10 +17,12 @@ class AddMemberListener extends Listener {
             console.log(`Added to users with user_id ${userID}`)
         }
 
-        DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${userID}, ${guildID});`, (err, res) => {
+        await DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${userID}, ${guildID});`, (err, res) => {
             if(err) return console.log(err)
             console.log(`Added to members with user_id ${userID} and guild_id ${guildID}`)
         })
+
+        this.client.emit('xp-levelUp', await (await this.client.guilds.fetch(guildID)).members.fetch(userID), 0, false)
     };
 };
 

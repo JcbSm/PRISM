@@ -18,7 +18,7 @@ class MessageListener extends Listener {
             };
 
             if(!(await this.client.db.query(`SELECT user_id FROM members WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`)).rows[0] && !message.author.bot) {
-                this.client.emit('addMember', message.member)
+                this.client.emit('addMember', message.member.id, message.guild.id)
             } else if(!message.author.bot) {
                 this.client.emit('xp-message', message)
                 this.client.emit('stats-message', message)

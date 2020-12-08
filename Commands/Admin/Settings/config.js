@@ -519,7 +519,7 @@ class ConfigCommand extends Command {
                             fields: [
                                 {
                                     name: 'EXAMPLES',
-                                    value: '`add:Newbie ROLES, add:227848397447626752, remove:@Players`'
+                                    value: '`add:GAME ROLES, add:227848397447626752, remove:@MOD ROLES`'
                                 },
                                 {
                                     name: 'CURRENT ROLES',
@@ -551,7 +551,7 @@ class ConfigCommand extends Command {
                             fields: [
                                 {
                                     name: 'EXAMPLES',
-                                    value: '`add:GAME ROLES, add:227848397447626752, remove:@MOD ROLES`'
+                                    value: '`add:Newbie ROLES, add:227848397447626752, remove:@Players`'
                                 },
                                 {
                                     name: 'CURRENT ROLES',

@@ -9,7 +9,13 @@ class ReadyListener extends Listener {
     };
 
     async exec() {
-        console.log('Online')
+        
+        this.client.testing ? console.log('Online') : (await this.client.users.fetch(this.client.ownerID)).send({ embed: {
+            color: await this.client.config.colors.green,
+            title: 'ONLINE',
+            description: `\`[${this.client.functions.UCT()} UCT]\``,
+            timestamp: Date.now()
+        }});
         
         //Resetting things.
 
@@ -17,6 +23,7 @@ class ReadyListener extends Listener {
         const voiceMembers = (await this.client.db.query(`SELECT guild_id, user_id FROM members WHERE voice = true`)).rows;
 
         for(let i = 0; i < voiceMembers.length; i++) {
+            if(this.client.testing && voiceMembers[i].guild_id !== '569556194612740115') continue;
             let member = await (await this.client.guilds.fetch(voiceMembers[i].guild_id)).members.fetch(voiceMembers[i].user_id);
             if(member.voice.channel) {
                 this.client.emit('xp-joinVoice', null, member.voice)
@@ -32,9 +39,13 @@ class ReadyListener extends Listener {
         for(const tempMute of tempMutes) {
             let member = await (await this.client.guilds.fetch(tempMute.guild_id)).members.fetch(tempMute.user_id)
             this.client.emit('mod-tempmute', member)
-        }
+        };
 
-        //console.log(this.client.config.client)
+        // await this.client.db.query(`DELETE FROM members WHERE guild_id = 569556194612740115`)
+
+        // const mem = await (await this.client.guilds.fetch('569556194612740115')).members.fetch('227848397447626752');
+
+        // this.client.emit('guildMemberAdd', mem)
     };
 };
 

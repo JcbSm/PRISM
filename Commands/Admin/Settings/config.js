@@ -45,53 +45,17 @@ class ConfigCommand extends Command {
 
         function defaultEmbed(options) {
 
-            embed = { embed: {
+            embed = {
                 title: 'CHOOSE AN OPTION',
                 description: options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n"),
-            }};
+            };
 
-            Object.assign(embed.embed, globalEmbedOptions)
+            Object.assign(embed, globalEmbedOptions)
 
             return embed;
         }
 
-        function prompt(embed) {
-
-            return {
-                start: () => {
-                    return embed;
-                },
-                retry: () => {
-                    return embed;
-                },
-                cancel: () => {
-                    return { embed: {
-                        title: 'COMMAND CANCELLED',
-                        description: '`Cancelled by User.`',
-                        timestamp: Date.now(),
-                        color: client.config.colors.red
-                    }};
-                },
-                ended: () => {
-                    return { embed: {
-                        title: 'COMMAND CANCELLED',
-                        description: 'Invalid Input.\n`Retry limit exceeded.`',
-                        timestamp: Date.now(),
-                        color: client.config.colors.red
-                    }};
-                },
-                timeout: () => {
-                    return { embed: {
-                        title: 'COMMAND CANCELLED',
-                        description: `Timed Out.\n\`[${client.functions.UCT()}]\``,
-                        timestamp: Date.now(),
-                        color: client.config.colors.red
-                    }};
-                },
-                retries: 10,
-                time: 30*1000,
-            }
-        }
+        const { prompt } = this.client.functions;
         
         let options = [
             ['LEVELS', 'LEVEL', '1'],
@@ -155,7 +119,7 @@ class ConfigCommand extends Command {
 
                             case 'TEXT':
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'LEVEL-UP MESSAGE',
                                     description: 'Set the text that will be sent when a member levels up in this server.',
                                     fields: [
@@ -164,9 +128,9 @@ class ConfigCommand extends Command {
                                             value: variables.map(v => `\`${v.value}\` : ${v.name}`).join('\n')
                                         }
                                     ],
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -217,7 +181,7 @@ class ConfigCommand extends Command {
                                 
                                 currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `Level: \`${r.level}\`, <@&${r.id}>`).join('\n')}` : '`N/A`'
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'REWARD ROLES',
                                     description: `Choose roles which will be rewarded to people after reaching a certain level. Seperate arguments with a \`,\`\n\n*To add a reward role:*\n\`<level>:<roleResolvable>\`\n\n*To remove a reward role:*\n\`remove:<roleResolvable>\``,
                                     fields: [
@@ -231,9 +195,9 @@ class ConfigCommand extends Command {
                                         }
                                     ],
                                     
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -289,7 +253,7 @@ class ConfigCommand extends Command {
                                     blacklist = '`NULL`'
                                 }
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'CHANNEL BLACKLIST',
                                     description: `Prevent members from earning XP in these channels`,
                                     fields: [
@@ -307,9 +271,9 @@ class ConfigCommand extends Command {
                                         }
                                     ],
                                     
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -331,7 +295,7 @@ class ConfigCommand extends Command {
                                     whitelist = '`NULL`'
                                 }
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'CHANNEL WHITELIST',
                                     description: `Only allow members from to XP in these channels`,
                                     fields: [
@@ -349,9 +313,9 @@ class ConfigCommand extends Command {
                                         }
                                     ],
                                     
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -399,12 +363,12 @@ class ConfigCommand extends Command {
 
                             case 'COLOR':
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'TYPE A COLOR',
                                     description: 'Any resolveable color.'
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions);
+                                Object.assign(embed, globalEmbedOptions);
 
                                 value = yield {
 
@@ -436,7 +400,7 @@ class ConfigCommand extends Command {
 
                             case 'MUTE':
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'MUTE WARNING MESSAGE',
                                     description: 'Set the text that will be sent to a user when they are muted in this server.',
                                     fields: [
@@ -445,9 +409,9 @@ class ConfigCommand extends Command {
                                             value: variables.map(v => `\`${v.value}\` : ${v.name}`).join('\n')
                                         }
                                     ],
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -461,7 +425,7 @@ class ConfigCommand extends Command {
 
                             case 'KICK':
 
-                                embed = { embed: {
+                                embed = {
                                     title: 'KICK WARNING MESSAGE',
                                     description: 'Set the text that will be sent to a user when they are muted in this server.',
                                     fields: [
@@ -470,9 +434,9 @@ class ConfigCommand extends Command {
                                             value: variables.map(v => `\`${v.value}\` : ${v.name}`).join('\n')
                                         }
                                     ],
-                                }};
+                                };
 
-                                Object.assign(embed.embed, globalEmbedOptions)
+                                Object.assign(embed, globalEmbedOptions)
 
                                 value = yield {
 
@@ -513,7 +477,7 @@ class ConfigCommand extends Command {
                                     
                         currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `<@&${r}>`).join('\n')}` : '`N/A`'
 
-                        embed = { embed: {
+                        embed = {
                             title: 'SET SEPARATOR ROLES',
                             description: 'Set roles which will be given/removed if a member has roles inbetween them.\nSeperate arguments with a \`,\`\n\n*To add a separator role:*\n`add:[role]`\n\n*To remove a separator role:*\n`remove:[role]`',
                             fields: [
@@ -526,9 +490,9 @@ class ConfigCommand extends Command {
                                     value: currentRoles
                                 }
                             ]
-                        }};
+                        };
 
-                        Object.assign(embed.embed, globalEmbedOptions)
+                        Object.assign(embed, globalEmbedOptions)
 
                         value = yield {
 
@@ -545,7 +509,7 @@ class ConfigCommand extends Command {
                                     
                         currentRoles = currentRoles.length !== 0 ? `${currentRoles.map(r => `<@&${r}>`).join('\n')}` : '`N/A`'
 
-                        embed = { embed: {
+                        embed = {
                             title: 'SET JOIN ROLES',
                             description: 'Set roles which will be given when a member joins the server.\nSeperate arguments with a \`,\`\n\n*To add a role:*\n`add:[role]`\n\n*To remove a role:*\n`remove:[role]`',
                             fields: [
@@ -558,9 +522,9 @@ class ConfigCommand extends Command {
                                     value: currentRoles
                                 }
                             ]
-                        }};
+                        };
 
-                        Object.assign(embed.embed, globalEmbedOptions)
+                        Object.assign(embed, globalEmbedOptions)
 
                         value = yield {
 

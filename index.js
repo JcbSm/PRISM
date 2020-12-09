@@ -331,6 +331,44 @@ client.functions = {
             }
             return valid;
         },
+
+        prompt: function prompt(embed, retries = 5, time = 60*1000) {
+
+            return {
+                start: () => {
+                    return { embed: embed };
+                },
+                retry: () => {
+                    return { embed: embed };
+                },
+                cancel: () => {
+                    return { embed: {
+                        title: 'COMMAND CANCELLED',
+                        description: '`Cancelled by User.`',
+                        timestamp: Date.now(),
+                        color: client.config.colors.red
+                    }};
+                },
+                ended: () => {
+                    return { embed: {
+                        title: 'COMMAND CANCELLED',
+                        description: 'Invalid Input.\n`Retry limit exceeded.`',
+                        timestamp: Date.now(),
+                        color: client.config.colors.red
+                    }};
+                },
+                timeout: () => {
+                    return { embed: {
+                        title: 'COMMAND CANCELLED',
+                        description: `Timed Out.\n\`[${client.functions.UCT()}]\``,
+                        timestamp: Date.now(),
+                        color: client.config.colors.red
+                    }};
+                },
+                retries: retries,
+                time: time,
+            }
+        }
 }
 
 client.login(credentials.TOKEN)

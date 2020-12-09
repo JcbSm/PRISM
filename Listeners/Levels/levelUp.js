@@ -1,4 +1,5 @@
 const { Listener } = require('discord-akairo');
+const nodemon = require('nodemon');
 
 class XpLevelUpListener extends Listener {
     constructor() {
@@ -9,6 +10,8 @@ class XpLevelUpListener extends Listener {
     };
 
     async exec(member, xp, broadcast) {
+
+        console.log(broadcast)
 
         const data = (await this.client.db.query(`SELECT levels_channel_id, config FROM guilds WHERE guild_id = ${member.guild.id}`)).rows[0];
         const [channelID, config, level] = [data.levels_channel_id, JSON.parse(data.config), this.client.functions.levelCalc(xp)];
@@ -24,14 +27,20 @@ class XpLevelUpListener extends Listener {
             if(config.levels.message.type === 'embed') {
 
                 message = ('', {embed: {
-                    description: await this.client.functions.parseText(config.levels.message.text, member)
+                    title: 'LEVEL UP!',
+                    description: await this.client.functions.parseText(config.levels.message.text, member),
+                    timestamp: Date.now(),
+                    footer: {
+                        text: member.user.tag
+                    },
+                    color: await this.client.config.colors.embed(member.guild)
                 }})
             } else if(config.levels.message.type === 'message') {
                 
                 message = await this.client.functions.parseText(config.levels.message.text, member)
             };
 
-            broadcast ? channel.send(message) : '';
+            broadcast !== false ? channel.send(message) : null;
 
         };
 

@@ -23,10 +23,30 @@ class MessageListener extends Listener {
                 this.client.emit('xp-message', message)
                 this.client.emit('stats-message', message)
             };
-            const guildData = (await this.client.db.query(`SELECT * FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0]
+
+            const guildData = (await this.client.db.query(`SELECT * FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];
+
             switch(message.channel.id) {
                 case guildData.counting_channel_id:
                     this.client.emit('count', message);
+            };
+            
+            if(!message.author.bot && message.channel.id !== guildData.counting_channel_id) {
+
+                //Auto Responder
+                const responses = (await this.client.db.query(`SELECT * FROM responder WHERE guild_id = ${message.guild.id}`)).rows;
+
+                for(let {regex, text_response, reaction_response, match_content} of responses) {
+                    
+                    regex = regex.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\./g, '\\.').replace(/\^/g, '\\^').replace(/\$/g, '\\$').replace(/\:/g, '\\:').replace(/\//g, '\\/')
+                    regex = match_content ? new RegExp(`^${regex}$`, 'i') : new RegExp(`${regex}`, 'i');
+                    
+                    if(regex.test(message.content)) {
+                        console.log(text_response, reaction_response);
+                        text_response ? message.channel.send(await this.client.functions.parseText(text_response, message.member)) : null
+                        reaction_response ? message.react(reaction_response) : null
+                    };
+                };
             };
         };
     };

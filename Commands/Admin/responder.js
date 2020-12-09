@@ -246,9 +246,9 @@ class ResponderCommand extends Command {
                 '${JSON.stringify(args.whitelist.roles)}',
                 '${JSON.stringify(args.whitelist.channels)}'
             ) RETURNING *`, (err, res) => {
-                console.log(err, res)
+                //console.log(err, res)
                 if(res) {
-                    console.log
+                    //console.log
                     let embed = {
                         title: 'RESPONDER ADDED',
                         fields: [
@@ -282,7 +282,7 @@ class ResponderCommand extends Command {
                 }
             });
 
-            message.reply('Added.')
+            //message.reply('Added.')
         } else if(args.opt === 'REMOVE') {
 
             if(args.confirm) {

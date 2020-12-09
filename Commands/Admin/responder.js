@@ -73,19 +73,21 @@ class ResponderCommand extends Command {
 
                 // Match Type
                 options = [
-                    ['true', 'ANY', '1'],
-                    ['false', 'EXACT', '2']
+                    ['ANY', '1'],
+                    ['EXACT', '2']
                 ]
 
                 embed = Object.assign({
                     title: 'MATCH TYPE',
-                    description: `Should the text need to match the entire message, or any part of it\n\n${options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[1]}\``).join("\n")}`
+                    description: `Should the text need to match the entire message, or any part of it\n\n${options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n")}`
                 }, globalEmbedOptions)
 
                 type = yield {
                     type: options,
                     prompt: prompt(embed)
                 }
+
+                type === 'ANY' ? type = false : type === 'EXACT' ? type = true : null
 
                 // Text Response
                 embed = Object.assign({
@@ -98,7 +100,7 @@ class ResponderCommand extends Command {
                     prompt: prompt(embed)
                 };
 
-                if(response.text === 'null') response.text = null; else response.text = `'${response.text}'` 
+                if(response.text === 'null') response.text = null; else response.text = `'${response.text.replace(/'/g, `''`)}'` 
 
                 //Emoji Response
                 embed = Object.assign({
@@ -176,7 +178,7 @@ class ResponderCommand extends Command {
                         },
                         {
                             name: 'TYPE',
-                            value: res.rows[0].match_response === false ? '`ANY`' : '`EXACT`',
+                            value: res.rows[0].match_content === false ? '`ANY`' : '`EXACT`',
                             inline: true
                         },
                         {
@@ -244,7 +246,7 @@ class ResponderCommand extends Command {
                 '${JSON.stringify(args.whitelist.roles)}',
                 '${JSON.stringify(args.whitelist.channels)}'
             ) RETURNING *`, (err, res) => {
-
+                console.log(err, res)
                 if(res) {
                     console.log
                     let embed = {
@@ -261,7 +263,7 @@ class ResponderCommand extends Command {
                             },
                             {
                                 name: 'TYPE',
-                                value: res.rows[0].match_response === false ? '`ANY`' : '`EXACT`',
+                                value: res.rows[0].match_content === false ? '`ANY`' : '`EXACT`',
                                 inline: true
                             },
                             {

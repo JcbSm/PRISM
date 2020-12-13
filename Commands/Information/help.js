@@ -1,11 +1,11 @@
 const { Command } = require('discord-akairo');
-const { commandOptions } = require('../../../index');
+const { commandOptions } = require('../../index');
 
 const commandInfo = commandOptions({
     id: 'help',
     aliases: [],
     channel: null,
-    typing: false,
+    typing: true,
     description: {
         usage: ['', '(command)', '(category)'],
         content: 'Get help.'
@@ -24,9 +24,9 @@ class HelpCommand extends Command {
         let [ input, category, command ] = [yield];
 
         if(this.handler.categories.map(c => c.id.toLowerCase()).includes(input.toLowerCase())) {
-            category = this.handler.categories.get(this.client.functions.toTitleCase(input.toLowerCase()))
+            category = this.handler.findCategory(input.toLocaleLowerCase())
         } else if(this.handler.modules.map(c => c.id.toLocaleLowerCase()).includes(input.toLowerCase())) {
-            command = this.handler.modules.get(input.toLowerCase())
+            command = this.handler.findCommand(input.toLowerCase());
         }
 
         return { category, command }

@@ -56,21 +56,40 @@ class QueryCommand extends Command {
 
                         desc = `\`\`\`${query}\`\`\``
 
-                    } else if(res.rows.length === 1) {
+                    } else  {
+
+                        let displayRow = res.rows[0];
+
+                        if((JSON.stringify(displayRow, null, 2).length > 1000)) {
+
+                            for(const key of Object.keys(displayRow)) {
+                                
+                                if(typeof displayRow[key] === 'string') {
+                                    
+                                    if(displayRow[key].charAt(0) === '{' &&  displayRow[key].charAt(displayRow[key].length-1) === '}') {
+                                        displayRow[key] = '[Object]'
+                                    }
+                                }   
+
+                            }
+                        }
+                        
+                        if(res.rows.length === 1) {
 
                         desc = `\`\`\`${query}\`\`\``;
                         fieldArr.push({
                             name: 'Rows',
-                            value: `\`\`\`json\n${JSON.stringify(res.rows[0], null, 2)}\`\`\``
+                            value: `\`\`\`json\n${JSON.stringify(displayRow, null, 2)}\`\`\``
                         })
                         
-                    } else if(res.rows.length > 1) {
+                        } else if(res.rows.length > 1) {
 
-                        desc = `\`\`\`${query}\`\`\``;
-                        fieldArr.push({
-                            name: 'Rows',
-                            value: `\`\`\`json\n${JSON.stringify(res.rows[0], null, 2)} \n ... ${res.rows.length - 1} more items.\`\`\``
-                        })
+                            desc = `\`\`\`${query}\`\`\``;
+                            fieldArr.push({
+                                name: 'Rows',
+                                value: `\`\`\`json\n${JSON.stringify(displayRow, null, 2)} \n ... ${res.rows.length - 1} more items.\`\`\``
+                            })
+                        }
                     }
 
                     message.channel.send({embed: {
@@ -79,7 +98,7 @@ class QueryCommand extends Command {
                         fields: fieldArr
                     }})
 
-                    console.log(res);
+                    //console.log(res);
 
                 } catch(e) {console.log(e)}
             })

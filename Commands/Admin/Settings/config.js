@@ -34,7 +34,7 @@ class ConfigCommand extends Command {
             { name: 'XP', value: '{xp}'}
         ];
 
-        let defaultEmbedOptions = await this.client.config.presets.default(message.guild)
+        let defaultEmbedOptions = await this.client.config.presets.defaultOptions(message.guild)
 
         function optionEmbed(options) {
 

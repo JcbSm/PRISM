@@ -144,6 +144,16 @@ client.config = {
                 name: '\u200b',
                 value: '\u200b',
                 inline: true
+            },
+            defaultOptions: async (guild) =>  {
+                return {
+
+                    footer: {
+                        text: 'Type \'cancel\' to cancel.',
+                    },
+                    timestamp: Date.now(),
+                    color: await client.config.colors.embed(guild)
+                }
             }
         },
 }
@@ -186,10 +196,10 @@ client.functions = {
         UCT: function UCT(date = Date.now(), milliseconds = false) {
             let arr = []
             date = new Date(date)
-            arr.push(this.pad(date.getUTCHours(), 2));
-            arr.push(this.pad(date.getUTCMinutes(), 2));
-            arr.push(this.pad(date.getUTCSeconds(), 2));
-            if(milliseconds === true) arr.push(this.pad(date.getUTCMilliseconds(), 3))
+            arr.push(client.functions.pad(date.getUTCHours(), 2));
+            arr.push(client.functions.pad(date.getUTCMinutes(), 2));
+            arr.push(client.functions.pad(date.getUTCSeconds(), 2));
+            if(milliseconds === true) arr.push(client.functions.pad(date.getUTCMilliseconds(), 3))
             return arr.join(':')
         },
 
@@ -201,7 +211,7 @@ client.functions = {
             let level = 0;
             let n = 0;
             for(let i = 1; n <= xp; i++) {
-                n = this.xpCalc(i); level = i-1;
+                n = client.functions.xpCalc(i); level = i-1;
             };
             return level;
         },
@@ -241,7 +251,7 @@ client.functions = {
             const { xp } = (await client.db.query(`SELECT * FROM members WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)).rows[0];
             let level;
             if(text.includes('{level}')) {
-                level = this.levelCalc(xp)
+                level = client.functions.levelCalc(xp)
             }
             
             return text
@@ -330,6 +340,18 @@ client.functions = {
                 }
             }
             return valid;
+        },
+
+        optionEmbed: function optionEmbed(options, defaultOptions) {
+
+            embed = {
+                title: 'CHOOSE AN OPTION',
+                description: options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n"),
+            };
+
+            Object.assign(embed, defaultOptions)
+
+            return embed;
         },
 
         prompt: function prompt(embed, retries = 5, time = 60*1000) {

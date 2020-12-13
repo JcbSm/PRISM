@@ -139,7 +139,7 @@ class ChannelCommand extends Command {
         if(args.option.toLowerCase() !== 'view') {
             message.channel.send({ embed: {
                 description: `Set **${args.option.toUpperCase()}** channel to ${args.channel}`,
-                color: this.client.config.colors.discord.blue
+                color: await this.client.config.colors.embed(message.guild)
             }});  
         }
     }catch(e) {console.log(e)}

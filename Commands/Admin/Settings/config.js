@@ -34,23 +34,16 @@ class ConfigCommand extends Command {
             { name: 'XP', value: '{xp}'}
         ];
 
-        let globalEmbedOptions = {
+        let defaultEmbedOptions = await this.client.config.presets.default(message.guild)
 
-            footer: {
-                text: 'Type \'cancel\' to cancel.',
-            },
-            timestamp: Date.now(),
-            color: await this.client.config.colors.embed(message.guild)
-        };
-
-        function defaultEmbed(options) {
+        function optionEmbed(options) {
 
             embed = {
                 title: 'CHOOSE AN OPTION',
                 description: options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n"),
             };
 
-            Object.assign(embed, globalEmbedOptions)
+            Object.assign(embed, defaultEmbedOptions)
 
             return embed;
         }
@@ -66,7 +59,7 @@ class ConfigCommand extends Command {
         setting = yield {
 
             type: options,
-            prompt: prompt(defaultEmbed(options))
+            prompt: prompt(optionEmbed(options))
         };
 
         switch (setting) {
@@ -82,7 +75,7 @@ class ConfigCommand extends Command {
                 option = yield {
 
                     type: options,
-                    prompt: prompt(defaultEmbed(options))
+                    prompt: prompt(optionEmbed(options))
                 };
 
                 switch (option) {
@@ -97,7 +90,7 @@ class ConfigCommand extends Command {
                         optionTwo = yield {
 
                             type: options,
-                            prompt: prompt(defaultEmbed(options))
+                            prompt: prompt(optionEmbed(options))
                         };
 
                         switch (optionTwo) {
@@ -112,7 +105,7 @@ class ConfigCommand extends Command {
                                 value = yield {
                                     
                                     type: options,
-                                    prompt: prompt(defaultEmbed(options))
+                                    prompt: prompt(optionEmbed(options))
                                 };
 
                                 break;
@@ -130,7 +123,7 @@ class ConfigCommand extends Command {
                                     ],
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -155,7 +148,7 @@ class ConfigCommand extends Command {
                         optionTwo = yield {
 
                             type: options,
-                            prompt: prompt(defaultEmbed(options))
+                            prompt: prompt(optionEmbed(options))
                         }
 
                         switch (optionTwo) {
@@ -170,7 +163,7 @@ class ConfigCommand extends Command {
                                 value = yield {
 
                                     type: options,
-                                    prompt: prompt(defaultEmbed(options))
+                                    prompt: prompt(optionEmbed(options))
                                 }
 
                                 break;
@@ -197,7 +190,7 @@ class ConfigCommand extends Command {
                                     
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -222,7 +215,7 @@ class ConfigCommand extends Command {
                         optionTwo = yield {
 
                             type: options,
-                            prompt: prompt(defaultEmbed(options))
+                            prompt: prompt(optionEmbed(options))
                         };
 
                         switch (optionTwo) {
@@ -237,7 +230,7 @@ class ConfigCommand extends Command {
                                 value = yield {
 
                                     type: options,
-                                    prompt: prompt(defaultEmbed(options))
+                                    prompt: prompt(optionEmbed(options))
 
                                 }
 
@@ -273,7 +266,7 @@ class ConfigCommand extends Command {
                                     
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -315,7 +308,7 @@ class ConfigCommand extends Command {
                                     
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -342,7 +335,7 @@ class ConfigCommand extends Command {
                 option = yield {
 
                     type: options,
-                    prompt: prompt(defaultEmbed(options))
+                    prompt: prompt(optionEmbed(options))
                 };
 
                 switch (option) {
@@ -356,7 +349,7 @@ class ConfigCommand extends Command {
                         optionTwo = yield {
 
                             type: options,
-                            prompt: prompt(defaultEmbed(options))
+                            prompt: prompt(optionEmbed(options))
                         };
 
                         switch (optionTwo) {
@@ -368,7 +361,7 @@ class ConfigCommand extends Command {
                                     description: 'Any resolveable color.'
                                 };
 
-                                Object.assign(embed, globalEmbedOptions);
+                                Object.assign(embed, defaultEmbedOptions);
 
                                 value = yield {
 
@@ -393,7 +386,7 @@ class ConfigCommand extends Command {
 
                         optionTwo = yield {
                             type: options,
-                            prompt: prompt(defaultEmbed(options))
+                            prompt: prompt(optionEmbed(options))
                         };
 
                         switch (optionTwo) {
@@ -411,7 +404,7 @@ class ConfigCommand extends Command {
                                     ],
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -436,7 +429,7 @@ class ConfigCommand extends Command {
                                     ],
                                 };
 
-                                Object.assign(embed, globalEmbedOptions)
+                                Object.assign(embed, defaultEmbedOptions)
 
                                 value = yield {
 
@@ -464,7 +457,7 @@ class ConfigCommand extends Command {
                 option = yield {
 
                     type: options,
-                    prompt: prompt(defaultEmbed(options))
+                    prompt: prompt(optionEmbed(options))
                 };
 
                 let currentRoles;
@@ -492,7 +485,7 @@ class ConfigCommand extends Command {
                             ]
                         };
 
-                        Object.assign(embed, globalEmbedOptions)
+                        Object.assign(embed, defaultEmbedOptions)
 
                         value = yield {
 
@@ -524,7 +517,7 @@ class ConfigCommand extends Command {
                             ]
                         };
 
-                        Object.assign(embed, globalEmbedOptions)
+                        Object.assign(embed, defaultEmbedOptions)
 
                         value = yield {
 

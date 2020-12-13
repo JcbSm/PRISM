@@ -43,10 +43,15 @@ class HelpListener extends Listener {
 
             if(module.description.argumentOptions) {
 
+                embed.fields.push({
+                    name: '\u200b',
+                    value: 'ARGUMENT OPTIONS:'
+                })
+
                 for(let arg of module.description.argumentOptions) {
 
                     embed.fields.push({
-                        name: arg.id.toUpperCase(),
+                        name: `${arg.id.toUpperCase()}`,
                         value: arg.options.map(e => `- \`${e[0]}\``).join('\n'),
                         inline: true
                     })

@@ -74,8 +74,9 @@ class RankCardCommand extends Command {
 
                     if(color) {
                         await this.client.db.query(`UPDATE members SET rank_card_color = '${color}' WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`, (err, res) => {
-                            console.log(err, res)
+                            //console.log(err, res)
                         });
+                        value = color
                     } else {
                         return message.reply('Invalid colour.')
                     }

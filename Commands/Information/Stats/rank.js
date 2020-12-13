@@ -48,7 +48,7 @@ class RankCommand extends Command {
                 highlight: '#ffffff',
                 highlightDark: '#ababab',
                 border: '#1c1c1c',
-                main: await this.client.config.colors.embed(message.guild)
+                main: memberData.rank_card_color ? memberData.rank_card_color : await this.client.config.colors.embed(message.guild)
             }
 
             registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'})

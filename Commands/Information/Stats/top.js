@@ -141,7 +141,11 @@ class TopCommand extends Command {
             try{
                 mention = await message.guild.members.fetch(data[i].user_id);
             } catch(error) {
-                mention = (await this.client.users.fetch(data[i].user_id)).tag;
+                try{
+                    mention = (await this.client.users.fetch(data[i].user_id)).tag;
+                } catch {
+                    mention = '`Deleted User`'
+                }
             }
             arr.push(`\`${client.functions.pad(i+1, 2)}.\` ${mention} • ${displayValue(Object.values(data[i])[1])}`)
         };

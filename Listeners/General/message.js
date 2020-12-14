@@ -42,7 +42,6 @@ class MessageListener extends Listener {
                     regex = match_content ? new RegExp(`^${regex}$`, 'i') : new RegExp(`${regex}`, 'i');
                     
                     if(regex.test(message.content)) {
-                        console.log(text_response, reaction_response);
                         text_response ? message.channel.send(await this.client.functions.parseText(text_response, message.member)) : null
                         reaction_response ? message.react(reaction_response) : null
                     };

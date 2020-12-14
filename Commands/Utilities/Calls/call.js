@@ -1,26 +1,37 @@
 const { Command } = require('discord-akairo');
+const { commandOptions } = require('../../../index');
+
+const commandInfo = commandOptions({
+    id: 'call',
+    aliases: ['privatecall', 'pcall'],
+    channel: 'guild',
+    typing: false,
+    description: {
+        usage: ['(user limit) (name)'],
+        content: 'Creates a call'
+    },
+    clientPermissions: ['MANNAGE_CHANNELS', 'SEND_MESSAGES'],
+    userPermissions: []
+}, __dirname)
 
 class CallCommand extends Command {
     constructor() {
-        super('call', {
-            aliases: ['call', 'pcall'],
-            channel: 'guild',
-            description: {
-
-            },
-            args: [
-                {
-                    id: 'size',
-                    type: 'number',
-                    default: 0,
-                },
-                {
-                    id: 'name',
-                    match: 'rest'
-                }
-            ]
-        });
+        super(commandInfo.id, commandInfo);
     };
+
+    *args() {
+
+        const size = yield {
+            type: 'integer',
+            default: 0
+        }
+
+        const name = yield {
+            type: 'string'
+        }
+
+        return { size, name }
+    }
 
     async exec(message, args) {
 

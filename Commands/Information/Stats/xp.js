@@ -49,7 +49,7 @@ class XpCommand extends Command {
                 },
                 {
                     name: 'REMAINING XP',
-                    value: `\`${groupDigits(max-current)}\``,
+                    value: `\`${groupDigits(max-min-current)}\``,
                     inline: true
                 },
                 this.client.config.presets.blankFieldInline,

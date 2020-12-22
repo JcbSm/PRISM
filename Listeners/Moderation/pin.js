@@ -55,6 +55,7 @@ class PinListener extends Listener {
         }
 
         channel.send({embed: embed});
+        message.react('📌')
     };
 };
 

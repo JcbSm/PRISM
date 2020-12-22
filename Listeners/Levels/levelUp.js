@@ -11,8 +11,6 @@ class XpLevelUpListener extends Listener {
 
     async exec(member, xp, broadcast) {
 
-        console.log(broadcast)
-
         const data = (await this.client.db.query(`SELECT levels_channel_id, config FROM guilds WHERE guild_id = ${member.guild.id}`)).rows[0];
         const [channelID, config, level] = [data.levels_channel_id, JSON.parse(data.config), this.client.functions.levelCalc(xp)];
 
@@ -35,6 +33,7 @@ class XpLevelUpListener extends Listener {
                     },
                     color: await this.client.config.colors.embed(member.guild)
                 }})
+
             } else if(config.levels.message.type === 'message') {
                 
                 message = await this.client.functions.parseText(config.levels.message.text, member)
@@ -58,7 +57,7 @@ class XpLevelUpListener extends Listener {
                     if(role.level <= level) arr.push(role.id)
                 };
 
-                console.log(arr)
+                //console.log(arr)
 
                 member.roles.add(arr);
 

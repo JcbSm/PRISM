@@ -27,7 +27,8 @@ class CallCommand extends Command {
         }
 
         const name = yield {
-            type: 'string'
+            type: 'string',
+            match: 'rest'
         }
 
         return { size, name }

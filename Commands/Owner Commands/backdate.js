@@ -67,7 +67,7 @@ class BackdateCommand extends Command {
                         if(members.find(m => m.id === msg.author.id)) {
                             members.find(m => m.id === msg.author.id).messages.push(msg.createdTimestamp)
                         } else {
-                            members.push({id: msg.member.id, messages: [msg.createdTimestamp], xpMessages: 0, xp: 0 })
+                            members.push({id: msg.author.id, messages: [msg.createdTimestamp], xpMessages: 0, xp: 0 })
                         }
                     } catch(e) {
                         console.log(msg.url)

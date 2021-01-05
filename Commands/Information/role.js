@@ -55,6 +55,8 @@ class RoleInfoCommand extends Command {
             arr.push(members[i][0])
         }
 
+        console.log(role.permissions)
+
         let embed = {
             title: 'ROLE INFORMATION',
             description: `${role}`,

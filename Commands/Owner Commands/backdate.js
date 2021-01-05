@@ -128,24 +128,29 @@ class BackdateCommand extends Command {
 
         for(const m of members) {
 
-            if(!(await DB.query(`SELECT user_id FROM users WHERE user_id = ${m.id}`)).rows[0]) {
+            try{
 
-                await DB.query(`INSERT INTO users (user_id) VALUES (${m.id});`);
-                console.log(`Added to users with user_id ${m.id}`)
+                if(!(await DB.query(`SELECT user_id FROM users WHERE user_id = ${m.id}`)).rows[0]) {
+
+                    await DB.query(`INSERT INTO users (user_id) VALUES (${m.id});`);
+                    console.log(`Added to users with user_id ${m.id}`)
+                
+                } 
+                
+                if(!(await DB.query(`SELECT user_id FROM members WHERE user_id = ${m.id} AND guild_id = ${guild.id}`)).rows[0]) {
+                    console.log(true)
+                    await DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${m.id}, ${guild.id});`, (err, res) => {
+                        console.log(`Added to members with user_id ${m.id} and guild_id ${guild.id}`)
+                    })
+                }
+
+                await DB.query(`UPDATE members SET messages = messages + ${m.messages}, xp = xp + ${m.xp}, xp_messages = xp_messages + ${m.xpMessages} WHERE user_id = ${m.id} AND guild_id = ${guild.id}`, (err, res) => {if (err) console.log(err, res)})
+
+                //this.client.emit('xp-levelUp', await (await this.client.guilds.fetch(guild.id)).members.fetch(m.id), 0, false)
+
+
+            } catch(e) {console.log(e)}
             
-            } 
-            
-            if(!(await DB.query(`SELECT user_id FROM members WHERE user_id = ${m.id} AND guild_id = ${guild.id}`)).rows[0]) {
-                console.log(true)
-                await DB.query(`INSERT INTO members (user_id, guild_id) VALUES (${m.id}, ${guild.id});`, (err, res) => {
-                    console.log(`Added to members with user_id ${m.id} and guild_id ${guild.id}`)
-                })
-            }
-
-            await DB.query(`UPDATE members SET messages = messages + ${m.messages}, xp = xp + ${m.xp}, xp_messages = xp_messages + ${m.xpMessages} WHERE user_id = ${m.id} AND guild_id = ${guild.id}`, (err, res) => {console.log(err, res)})
-
-            this.client.emit('xp-levelUp', await (await this.client.guilds.fetch(guild.id)).members.fetch(m.id), 0, false)
-
         }
 
         await sent.delete();

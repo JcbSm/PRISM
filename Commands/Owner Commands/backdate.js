@@ -22,6 +22,9 @@ class BackdateCommand extends Command {
     async exec(message, args) {
 
         const guild = message.guild;
+        const config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].config)
+
+        console.log(config.levels.channels.mode)
 
         let [ members, n, total ] = [[], 0, 0];
 
@@ -32,6 +35,9 @@ class BackdateCommand extends Command {
         for(const [,channel] of guild.channels.cache.filter(c => c.type === 'text')) {
 
             n++;
+
+            if(config.levels.channels.mode === 'blacklist' && config.levels.channels.blacklist.includes(channel.id)) continue;
+            if(config.levels.channels.mode === 'whitelist' && !config.levels.channels.whitelist.includes(channel.id)) continue;
 
             let messages = await channel.messages.fetch({ limit: 100 })
 
@@ -64,7 +70,7 @@ class BackdateCommand extends Command {
                             members.push({id: msg.member.id, messages: [msg.createdTimestamp], xpMessages: 0, xp: 0 })
                         }
                     } catch(e) {
-                        console.log(e)
+                        console.log(msg.url)
                     }
 
                 }

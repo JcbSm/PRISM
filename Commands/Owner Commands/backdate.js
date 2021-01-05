@@ -57,10 +57,14 @@ class BackdateCommand extends Command {
                     
                     if(msg.author.bot) continue;
                     
-                    if(members.find(m => m.id === msg.author.id)) {
-                        members.find(m => m.id === msg.author.id).messages.push(msg.createdTimestamp)
-                    } else {
-                        members.push({id: msg.member.id, messages: [msg.createdTimestamp], xpMessages: 0, xp: 0 })
+                    try{
+                        if(members.find(m => m.id === msg.author.id)) {
+                            members.find(m => m.id === msg.author.id).messages.push(msg.createdTimestamp)
+                        } else {
+                            members.push({id: msg.member.id, messages: [msg.createdTimestamp], xpMessages: 0, xp: 0 })
+                        }
+                    } catch(e) {
+                        console.log(e)
                     }
 
                 }

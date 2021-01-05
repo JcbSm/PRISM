@@ -93,7 +93,7 @@ class RoleInfoCommand extends Command {
                 },
                 {
                     name: 'PERMISSIONS',
-                    value: role.permissions.toArray().length < 1 ? role.permissions.toArray().map(e => `\`${e}\``).join("\n") : '`null`',
+                    value: role.permissions.toArray().length > 1 ? role.permissions.toArray().map(e => `\`${e}\``).join("\n") : '`null`',
                     inline: true,
                 },
                 {

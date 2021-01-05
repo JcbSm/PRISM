@@ -55,8 +55,6 @@ class RoleInfoCommand extends Command {
             arr.push(members[i][0])
         }
 
-        console.log(role.permissions)
-
         let embed = {
             title: 'ROLE INFORMATION',
             description: `${role}`,
@@ -104,8 +102,6 @@ class RoleInfoCommand extends Command {
             ],
             color: role.color === 0 ? await this.client.config.colors.embed(message.guild) : role.color
         };
-
-        console.log(embed)
 
         message.channel.send({ embed: embed })
     };

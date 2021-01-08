@@ -86,13 +86,13 @@ class RankCardCommand extends Command {
         };
 
         let embed = {
-            description: `Set **${option.toUpperCase()}** channel to **${value}**`,
+            description: `Set **${option.toUpperCase()}** to **${value}**`,
             color: await this.client.config.colors.embed(message.guild)
         };
 
         if(option === 'COLOR') value ? embed.color = this.client.functions.resolveHex(value) === '#FFFFFF' ? '#FCFCFC' : this.client.functions.resolveHex(value) : null
 
-        message.channel.send({ embed: embed});
+        message.channel.send({ embed: embed });
         
     };
 };

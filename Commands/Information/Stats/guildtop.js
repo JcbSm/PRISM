@@ -57,7 +57,7 @@ class GuildTopCommand extends Command {
 
     async exec(message, args) {
 
-        let [data, client] = [null, this.client]
+        let [data, client] = [[], this.client]
         let [mention, start, end, page, sort] = [null, 0, 0, args.page, undefined];
         function displayValue() {};
 
@@ -82,13 +82,21 @@ class GuildTopCommand extends Command {
                 };
                 break;
             case 'AGE':
-                data = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
-                data.forEach(async function(g, index, d) {
-                    d[index] = {
-                        guild_id: g.guild_id,
-                        created: (await client.guilds.fetch(g.guild_id)).createdTimestamp 
+                let iData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                for(let i = 0; i < iData.length; i++) {
+
+                    let timestamp;
+                    try{
+                        timestamp = (await client.guilds.fetch(iData[i].guild_id)).createdTimestamp;
+                    } catch(e) {
+                        continue;
                     }
-                });
+
+                    data.push({
+                        guild_id: iData[i].guild_id,
+                        created: timestamp
+                    });
+                };
                 displayValue = function displayValue(val) {
                     return client.functions.since(val, 2)
                 }
@@ -97,6 +105,8 @@ class GuildTopCommand extends Command {
             default:
                 return message.reply('An error occurred.')
         };
+        
+        console.log(data)
 
         if(sort === 'ascend') {
             data.sort((a, b) => Object.values(a)[1] - Object.values(b)[1])

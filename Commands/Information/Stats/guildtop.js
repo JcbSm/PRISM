@@ -12,6 +12,7 @@ const commandInfo = commandOptions({
                 id: 'category',
                 options: [
                     ['MESSAGES'],
+                    ['VOICE'],
                     ['COUNT', 'COUNTS', 'COUNTING']
                 ]
             }
@@ -68,9 +69,15 @@ class GuildTopCommand extends Command {
                 };
                 break;
             case 'MESSAGES':
-                data = (await this.client.db.query(`SELECT guild_id, SUM(messages) FROM members group by guild_id`)).rows
+                data = (await this.client.db.query(`SELECT guild_id, SUM(messages) FROM members GROUP BY guild_id`)).rows;
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``
+                };
+                break;
+            case 'VOICE':
+                data = (await this.client.db.query(`SELECT guild_id, SUM(voice_minutes) FROM members GROUP BY guild_id`)).rows;
+                displayValue = function displayValue(val) {
+                    return val > 600 ? `\`${client.functions.groupDigits(Math.round(val/60))} hours\`` : `\`${client.functions.groupDigits(Math.round(val/6)/10)} hours\``
                 };
                 break;
             default:
@@ -96,13 +103,13 @@ class GuildTopCommand extends Command {
         };
         
         return message.channel.send({ embed: {
-            title: `${message.guild.name.toUpperCase()} LEADERBOARD`,
+            title: `${this.client.user.username.toUpperCase()} GUILD LEADERBOARD`,
             description: `*${args.category}:*\n${arr.join('\n')}`,
             footer: {
                 text: `Page ${page} | ${start+1} - ${end+1} of ${data.length}`
             },
             thumbnail: {
-                url: message.guild.iconURL()
+                url: this.client.user.displayAvatarURL()
             },
             timestamp: Date.now(),
             color: await this.client.config.colors.embed(message.guild)

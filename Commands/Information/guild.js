@@ -3,8 +3,8 @@ const { commandOptions } = require('../../index');
 const moment = require('moment')
 
 const commandInfo = commandOptions({
-    id: 'guild',
-    aliases: ['guildinfo', 'server', 'serverinfo'],
+    id: 'serverinfo',
+    aliases: ['guildinfo', 'server', 'guild'],
     channel: 'guild',
     typing: true,
     description: {

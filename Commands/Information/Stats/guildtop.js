@@ -2,18 +2,19 @@ const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
-    id: 'guildtop',
-    aliases: ['guilds', 'guildlb'],
+    id: 'servertop',
+    aliases: ['guilds', 'guildlb', 'servers', 'guildtop', 'serverlb'],
     description: {
         usage: ['[category]'],
-        content: 'Show guild leaderboards',
+        content: 'Show server leaderboards',
         argumentOptions: [
             {
                 id: 'category',
                 options: [
                     ['MESSAGES'],
                     ['VOICE'],
-                    ['COUNT', 'COUNTS', 'COUNTING']
+                    ['COUNT', 'COUNTS', 'COUNTING'],
+                    ['AGE']
                 ]
             }
         ]
@@ -57,7 +58,7 @@ class GuildTopCommand extends Command {
     async exec(message, args) {
 
         let [data, client] = [null, this.client]
-        let [mention, start, end, page] = [null, 0, 0, args.page];
+        let [mention, start, end, page, sort] = [null, 0, 0, args.page, undefined];
         function displayValue() {};
 
         switch(args.category.toUpperCase()) {
@@ -80,11 +81,28 @@ class GuildTopCommand extends Command {
                     return val > 600 ? `\`${client.functions.groupDigits(Math.round(val/60))} hours\`` : `\`${client.functions.groupDigits(Math.round(val/6)/10)} hours\``
                 };
                 break;
+            case 'AGE':
+                data = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                data.forEach(async function(g, index, d) {
+                    d[index] = {
+                        guild_id: g.guild_id,
+                        created: (await client.guilds.fetch(g.guild_id)).createdTimestamp 
+                    }
+                });
+                displayValue = function displayValue(val) {
+                    return client.functions.since(val, 2)
+                }
+                sort = 'ascend'
+                break;
             default:
                 return message.reply('An error occurred.')
         };
 
-        data.sort((a, b) => Object.values(b)[1] - Object.values(a)[1])
+        if(sort === 'ascend') {
+            data.sort((a, b) => Object.values(a)[1] - Object.values(b)[1])
+        } else {
+            data.sort((a, b) => Object.values(b)[1] - Object.values(a)[1])
+        }
 
         let arr = [];
 
@@ -103,7 +121,7 @@ class GuildTopCommand extends Command {
         };
         
         return message.channel.send({ embed: {
-            title: `${this.client.user.username.toUpperCase()} GUILD LEADERBOARD`,
+            title: `${this.client.user.username.toUpperCase()} SERVER LEADERBOARD`,
             description: `*${args.category}:*\n${arr.join('\n')}`,
             footer: {
                 text: `Page ${page} | ${start+1} - ${end+1} of ${data.length}`

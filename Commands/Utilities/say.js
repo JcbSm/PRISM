@@ -7,7 +7,7 @@ const commandInfo = commandOptions({
     channel: 'guild',
     typing: true,
     description: {
-        usage: '"[message]" (text-channel)',
+        usage: ['"[message]" (text-channel)'],
         content: 'Echoes a message sent by the user in either the specified channel or the same channel.'
     },
     clientPermissions: ['SEND_MESSAGES'],

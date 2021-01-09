@@ -32,6 +32,10 @@ class LogMissingPermissionsListener extends Listener {
                         inline: true
                     },
                     {
+                        name: 'MESSAGE',
+                        value: message.content
+                    },
+                    {
                         name: 'PERMISSIONS',
                         value: missing.map(m => `\`${m}\``).join('\n')
                     }

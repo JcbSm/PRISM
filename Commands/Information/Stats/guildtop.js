@@ -14,7 +14,8 @@ const commandInfo = commandOptions({
                     ['MESSAGES'],
                     ['VOICE'],
                     ['COUNT', 'COUNTS', 'COUNTING'],
-                    ['AGE']
+                    ['AGE'],
+                    ['MEMBERS', 'MEMBER']
                 ]
             }
         ]
@@ -57,50 +58,79 @@ class GuildTopCommand extends Command {
 
     async exec(message, args) {
 
-        let [data, client] = [[], this.client]
+        let [data, rawData, client] = [[], [], this.client]
         let [mention, start, end, page, sort] = [null, 0, 0, args.page, undefined];
         function displayValue() {};
 
         switch(args.category.toUpperCase()) {
 
             case 'COUNT':
+
                 data = (await this.client.db.query(`SELECT guild_id, counting_count FROM guilds WHERE counting_count > 0`)).rows;
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``;
                 };
                 break;
             case 'MESSAGES':
+
                 data = (await this.client.db.query(`SELECT guild_id, SUM(messages) FROM members GROUP BY guild_id`)).rows;
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``
                 };
                 break;
             case 'VOICE':
+
                 data = (await this.client.db.query(`SELECT guild_id, SUM(voice_minutes) FROM members GROUP BY guild_id`)).rows;
                 displayValue = function displayValue(val) {
                     return val > 600 ? `\`${client.functions.groupDigits(Math.round(val/60))} hours\`` : `\`${client.functions.groupDigits(Math.round(val/6)/10)} hours\``
                 };
                 break;
             case 'AGE':
-                let iData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
-                for(let i = 0; i < iData.length; i++) {
 
-                    let timestamp;
+                rawData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                for(let i = 0; i < rawData.length; i++) {
+
                     try{
-                        timestamp = (await client.guilds.fetch(iData[i].guild_id)).createdTimestamp;
+                        data.push({
+                            guild_id: rawData[i].guild_id,
+                            created: (await client.guilds.fetch(rawData[i].guild_id)).createdTimestamp
+                        });
                     } catch(e) {
                         continue;
                     }
 
-                    data.push({
-                        guild_id: iData[i].guild_id,
-                        created: timestamp
-                    });
                 };
                 displayValue = function displayValue(val) {
                     return client.functions.since(val, 2)
                 }
                 sort = 'ascend'
+                break;
+
+            case 'MEMBERS':
+
+                rawData = (await this.client.db.query(`SELECT guild_id, COUNT(user_id) FROM members GROUP BY guild_id`)).rows;
+                for(let i = 0; i < rawData.length; i++) {
+
+                    try {
+                        data.push({
+                            guild_id: rawData[i].guild_id,
+                            value: [rawData[i].count, (await (await client.guilds.fetch(rawData[i].guild_id)).members.fetch()).size]
+                        });
+                    } catch {
+                        data.push({
+                            guild_id: rawData[i].guild_id,
+                            value: [rawData[i].count]
+                        });
+                    }
+
+                };
+                displayValue = function displayValue(val) {
+                    if(val[1]) {
+                        return `\`${client.functions.groupDigits(val[0])}\` | \`${client.functions.groupDigits(val[1])}\``;
+                    } else {
+                        return `\`${client.functions.groupDigits(val[0])}\``
+                    }
+                };
                 break;
             default:
                 return message.reply('An error occurred.')
@@ -131,6 +161,7 @@ class GuildTopCommand extends Command {
         };
         
         return message.channel.send({ embed: {
+            
             title: `${this.client.user.username.toUpperCase()} SERVER LEADERBOARD`,
             description: `*${args.category}:*\n${arr.join('\n')}`,
             footer: {
@@ -141,6 +172,7 @@ class GuildTopCommand extends Command {
             },
             timestamp: Date.now(),
             color: await this.client.config.colors.embed(message.guild)
+
         }})
 
     }; 

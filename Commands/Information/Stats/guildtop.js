@@ -157,8 +157,6 @@ class GuildTopCommand extends Command {
             default:
                 return message.reply('An error occurred.')
         };
-        
-        console.log(data)
 
         if(sort === 'ascend') {
             data.sort((a, b) => Object.values(a)[1] - Object.values(b)[1])

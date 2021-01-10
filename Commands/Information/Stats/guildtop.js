@@ -67,34 +67,35 @@ class GuildTopCommand extends Command {
 
             case 'COUNT':
 
-                data = (await this.client.db.query(`SELECT guild_id, counting_count FROM guilds WHERE counting_count > 0`)).rows;
+                data = (await this.client.db.query(`SELECT guild_id, counting_count, leaderboard_display FROM guilds WHERE counting_count > 0`)).rows;
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``;
                 };
                 break;
             case 'MESSAGES':
 
-                data = (await this.client.db.query(`SELECT guild_id, SUM(messages) FROM members GROUP BY guild_id`)).rows;
+                data = (await this.client.db.query(`SELECT guilds.guild_id, SUM(messages), leaderboard_display FROM members JOIN guilds ON (guilds.guild_id = members.guild_id) GROUP BY guilds.guild_id`)).rows;
                 displayValue = function displayValue(val) {
                     return `\`${client.functions.groupDigits(val)}\``
                 };
                 break;
             case 'VOICE':
 
-                data = (await this.client.db.query(`SELECT guild_id, SUM(voice_minutes) FROM members GROUP BY guild_id`)).rows;
+                data = (await this.client.db.query(`SELECT guilds.guild_id, SUM(voice_minutes), leaderboard_display FROM members JOIN guilds ON (guilds.guild_id = members.guild_id) GROUP BY guilds.guild_id`)).rows;
                 displayValue = function displayValue(val) {
                     return val > 600 ? `\`${client.functions.groupDigits(Math.round(val/60))} hours\`` : `\`${client.functions.groupDigits(Math.round(val/6)/10)} hours\``
                 };
                 break;
             case 'AGE':
 
-                rawData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                rawData = (await this.client.db.query(`SELECT guild_id, leaderboard_display FROM guilds`)).rows;
                 for(let i = 0; i < rawData.length; i++) {
 
                     try{
                         data.push({
                             guild_id: rawData[i].guild_id,
-                            created: (await client.guilds.fetch(rawData[i].guild_id)).createdTimestamp
+                            created: (await client.guilds.fetch(rawData[i].guild_id)).createdTimestamp,
+                            leaderboard_display: rawData[i].leaderboard_display
                         });
                     } catch(e) {
                         continue;
@@ -109,18 +110,20 @@ class GuildTopCommand extends Command {
 
             case 'MEMBERS':
 
-                rawData = (await this.client.db.query(`SELECT guild_id, COUNT(user_id) FROM members GROUP BY guild_id`)).rows;
+                rawData = (await this.client.db.query(`SELECT guilds.guild_id, COUNT(user_id), leaderboard_display FROM members JOIN guilds ON (guilds.guild_id = members.guild_id) GROUP BY guilds.guild_id`)).rows;
                 for(let i = 0; i < rawData.length; i++) {
 
                     try {
                         data.push({
                             guild_id: rawData[i].guild_id,
-                            value: [rawData[i].count, (await (await client.guilds.fetch(rawData[i].guild_id)).members.fetch()).filter(m => !m.user.bot).size]
+                            value: [rawData[i].count, (await (await client.guilds.fetch(rawData[i].guild_id)).members.fetch()).filter(m => !m.user.bot).size],
+                            leaderboard_display: rawData[i].leaderboard_display
                         });
                     } catch {
                         data.push({
                             guild_id: rawData[i].guild_id,
-                            value: [rawData[i].count]
+                            value: [rawData[i].count],
+                            leaderboard_display: rawData[i].leaderboard_display
                         });
                     }
 
@@ -136,13 +139,14 @@ class GuildTopCommand extends Command {
             
             case 'JOINED':
 
-                rawData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                rawData = (await this.client.db.query(`SELECT guild_id, leaderboard_display FROM guilds`)).rows;
                 for(let i = 0; i < rawData.length; i++) {
 
                     try{
                         data.push({
                             guild_id: rawData[i].guild_id,
-                            joined: (await client.guilds.fetch(rawData[i].guild_id)).joinedTimestamp
+                            joined: (await client.guilds.fetch(rawData[i].guild_id)).joinedTimestamp,
+                            leaderboard_display: rawData[i].leaderboard_display
                         })
                     } catch {
                         continue;
@@ -157,6 +161,8 @@ class GuildTopCommand extends Command {
             default:
                 return message.reply('An error occurred.')
         };
+        
+        data.filter(g => g.leaderboard_display == 2)
 
         if(sort === 'ascend') {
             data.sort((a, b) => Object.values(a)[1] - Object.values(b)[1])
@@ -172,10 +178,17 @@ class GuildTopCommand extends Command {
 
         for(let i = start; i <= end; i++) {
             if(i >= data.length) break;
-            try{
-                mention = `**${(await client.guilds.fetch(data[i].guild_id)).name}**`;
-            } catch(error) {
-                mention = '`Unknown Server`'
+            
+            if(data[i].leaderboard_display == 1) {
+                mention = '**`ANONYMOUS SERVER`**';
+            } else if(data[i].leaderboard_display == 0) {
+                try{
+                    mention = `**${(await client.guilds.fetch(data[i].guild_id)).name}**`;
+                } catch(error) {
+                    mention = '`Unknown Server`'
+                }
+            } else {
+                continue;
             }
             arr.push(`\`${client.functions.pad(i+1, 2)}.\` ${mention} • ${displayValue(Object.values(data[i])[1])}`)
         };

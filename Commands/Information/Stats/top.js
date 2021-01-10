@@ -150,7 +150,7 @@ class TopCommand extends Command {
             arr.push(`\`${client.functions.pad(i+1, 2)}.\` ${mention} • ${displayValue(Object.values(data[i])[1])}`)
         };
         
-        message.channel.send({ embed: {
+        return message.channel.send({ embed: {
             title: `${message.guild.name.toUpperCase()} LEADERBOARD`,
             description: `*${args.category}:*\n${arr.join('\n')}`,
             footer: {

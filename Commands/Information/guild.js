@@ -95,7 +95,7 @@ class GuildInfoCommand extends Command {
             color: await this.client.config.colors.embed(guild)
         };
 
-        message.channel.send({ embed: embed})
+        return message.channel.send({ embed: embed})
     
     };
 };

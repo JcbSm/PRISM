@@ -3,7 +3,7 @@ const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'servertop',
-    aliases: ['guilds', 'guildlb', 'servers', 'guildtop', 'serverlb'],
+    aliases: ['guilds', 'guildlb', 'servers', 'guildtop', 'serverlb', 'gtop'],
     description: {
         usage: ['[category]'],
         content: 'Show server leaderboards',
@@ -152,6 +152,7 @@ class GuildTopCommand extends Command {
                 displayValue = function displayValue(val) {
                     return client.functions.since(val, 2)
                 };
+                sort = 'ascend';
                 break;
             default:
                 return message.reply('An error occurred.')

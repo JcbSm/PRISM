@@ -15,7 +15,8 @@ const commandInfo = commandOptions({
                     ['VOICE'],
                     ['COUNT', 'COUNTS', 'COUNTING'],
                     ['AGE'],
-                    ['MEMBERS', 'MEMBER']
+                    ['MEMBERS', 'MEMBER'],
+                    ['JOINED', 'JOIN']
                 ]
             }
         ]
@@ -130,6 +131,26 @@ class GuildTopCommand extends Command {
                     } else {
                         return `\`${client.functions.groupDigits(val[0])} recorded\``
                     }
+                };
+                break;
+            
+            case 'JOINED':
+
+                rawData = (await this.client.db.query(`SELECT guild_id FROM guilds`)).rows;
+                for(let i = 0; i < rawData.length; i++) {
+
+                    try{
+                        data.push({
+                            guild_id: rawData[i].guild_id,
+                            joined: (await client.guilds.fetch(rawData[i].guild_id)).joinedTimestamp
+                        })
+                    } catch {
+                        continue;
+                    }
+
+                };
+                displayValue = function displayValue(val) {
+                    return client.functions.since(val, 2)
                 };
                 break;
             default:

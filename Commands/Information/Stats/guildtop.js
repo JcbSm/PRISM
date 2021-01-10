@@ -114,7 +114,7 @@ class GuildTopCommand extends Command {
                     try {
                         data.push({
                             guild_id: rawData[i].guild_id,
-                            value: [rawData[i].count, (await (await client.guilds.fetch(rawData[i].guild_id)).members.fetch()).size]
+                            value: [rawData[i].count, (await (await client.guilds.fetch(rawData[i].guild_id)).members.fetch()).filter(m => !m.user.bot).size]
                         });
                     } catch {
                         data.push({
@@ -126,9 +126,9 @@ class GuildTopCommand extends Command {
                 };
                 displayValue = function displayValue(val) {
                     if(val[1]) {
-                        return `\`${client.functions.groupDigits(val[0])}\` | \`${client.functions.groupDigits(val[1])}\``;
+                        return `\`${client.functions.groupDigits(val[1])}\` | \`${client.functions.groupDigits(val[0])} recorded\``;
                     } else {
-                        return `\`${client.functions.groupDigits(val[0])}\``
+                        return `\`${client.functions.groupDigits(val[0])} recorded\``
                     }
                 };
                 break;
@@ -146,7 +146,7 @@ class GuildTopCommand extends Command {
 
         let arr = [];
 
-        start += 10*(page-1); end += (10*(page))-1;
+        start += 5*(page-1); end += (5*(page))-1;
         if(start > data.length) return message.reply('No data.')
         if(end >= data.length-1) end = data.length-1;
 

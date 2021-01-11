@@ -47,7 +47,7 @@ class EndCallCommand extends Command {
             })
 
         } else {
-            message.reply('No call found.')
+            message.reply('No user call found.')
         }
     };
 };

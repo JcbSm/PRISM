@@ -87,14 +87,41 @@ class CallCommand extends Command {
                     ]
                 });
 
-                this.client.db.query(`INSERT INTO calls 
+                await this.client.db.query(`INSERT INTO calls 
                     (guild_id, user_id, voice_channel_id, text_channel_id) 
                     VALUES (${message.guild.id}, ${message.author.id}, ${voiceChannel.id}, ${textChannel.id}
                 )`, (err, res) => console.log(err, res));
 
-                await message.react('👌')
+                await message.react('👌');
+
+                let fields = this.category.map(c => {
+                    return {
+                        name: c.id.toUpperCase(),
+                        value: `${c.description.content}\n\u200b`,
+                        inline: true
+                    }
+                });
+
+                for(let i = 0; i < fields.length; i++) {
+
+                    i % 3 === 1 ? fields.splice(i, 0, { name: '\u200b', value: '\u200b', inline: true }) : null;
+
+                }
+
+                while(fields.length % 3 !== 0) {
+                    fields.push({ name: '\u200b', value: '\u200b', inline: true })
+                }
+
+                await textChannel.send({ embed: {
+                    title: 'CALL COMMANDS',
+                    description: `Here is a list of the available commands.\nType \`${await this.handler.prefix(message)}help [command]\` for more information`,
+                    fields: fields,
+                    color: await this.client.config.colors.embed(message.guild),
+                    timestamp: Date.now()
+                }})
 
             } catch(e) {
+                console.log(e)
                 message.reply('An error occurred.')
             }
 

@@ -11,6 +11,8 @@ class MessageListener extends Listener {
 
     async exec(message) {
 
+        if(message.partial) message = await message.fetch();
+
         if(message.channel.type === 'text') {
 
             if(!(await this.client.db.query(`SELECT guild_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0]) {

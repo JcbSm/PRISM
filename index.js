@@ -65,6 +65,7 @@ class BotClient extends AkairoClient {
         }, {
             disableEveryone: true,
             allowMention: true,
+            partials: ['MESSAGE', 'REACTION']
         });
 
         this.commandHandler = new CommandHandler(this, {

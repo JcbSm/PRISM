@@ -131,7 +131,7 @@ class ReactionMessageCommand extends Command {
 
                 return message.channel.send({ embed: {
                     title: `${message.guild.name.toUpperCase()} REACTION MESSAGES`,
-                    description: data.map(d => `\`${d.reaction_message_id}\` • [[MESSAGE]](${d.message_url})`).join('\n'),
+                    description: data.map(d => `\`ID: ${d.reaction_message_id}\` • [[MESSAGE]](${d.message_url})`).join('\n'),
                     color: await this.client.config.colors.embed(message.guild)
                 }});
 
@@ -141,7 +141,7 @@ class ReactionMessageCommand extends Command {
                 
                 return message.channel.send({ embed: {
                     title: `ROLE REACTIONS`,
-                    description: `[Reaction Message](${args.reactionMessage.message_url})\n\n${reactions.map(r => `\`${r.reaction_id}\` • ${this.client.emojis.resolve(r.emoji) ? this.client.emojis.resolve(r.emoji) : r.emoji} • <@&${r.role_id}>`).join('\n')}`,
+                    description: `[Reaction Message](${args.reactionMessage.message_url})\n\n${reactions.map(r => `\`ID: ${r.reaction_id}\` • ${this.client.emojis.resolve(r.emoji) ? this.client.emojis.resolve(r.emoji) : r.emoji} • <@&${r.role_id}>`).join('\n')}`,
                     color: await this.client.config.colors.embed(message.guild),
                     timestamp: Date.now()
                 }})

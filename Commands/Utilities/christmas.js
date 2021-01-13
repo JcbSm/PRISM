@@ -4,7 +4,7 @@ const { commandOptions } = require('../../index');
 
 const commandInfo = commandOptions({
     id: 'christmas',
-    aliases: ['xmas'],
+    aliases: ['xmas', 'howfarawayisnextchristmas'],
     description: {
         usage: [''],
         content: 'See how far away christmas is.'

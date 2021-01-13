@@ -35,7 +35,8 @@ class ChristmasCommand extends Command {
 
         return message.channel.send({ embed: {
             title: 'CHRISTMAS IS SOON',
-            description: `Only \`${days}\` sleeps until christmas ${christmasYear}!!!`
+            description: `Only \`${days}\` sleeps until christmas ${christmasYear}!!!`,
+            color: await this.client.config.colors.embed(message.guild)
         }})
     };
 };

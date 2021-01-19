@@ -57,7 +57,7 @@ class MoveCommand extends Command {
     };
 
     async exec(message, args) {
-        console.log(args)
+
         if(!message.member.voice.channel) return message.reply('You are not in a voice channel.');
         if(args.members.length < 1) return message.reply('No members found to move');
 

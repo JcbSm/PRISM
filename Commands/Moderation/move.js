@@ -24,8 +24,12 @@ class MoveCommand extends Command {
         const channel = yield {
             type: 'voiceChannel',
             prompt: {
-                start: message => this.client.emit('help', message, this),
-                retry: message => this.client.emit('help', message, this)
+                start: message => {
+                    this.client.emit('help', message, this);
+                },
+                retry: message => {
+                    this.client.emit('help', message, this);
+                },
             }
         };
 

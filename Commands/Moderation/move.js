@@ -71,7 +71,7 @@ class MoveCommand extends Command {
 
         return await message.channel.send({ embed: {
             title: 'MOVED MEMBERS',
-            description: `Successfully moved members to ${args.channel}`,
+            description: `Successfully moved \`${args.members.length}\` members to ${args.channel}`,
             fields: [
                 {
                     name: 'MEMBERS',

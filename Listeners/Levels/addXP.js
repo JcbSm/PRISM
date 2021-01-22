@@ -24,7 +24,6 @@ class XpAddListener extends Listener {
             checkLevel(xp, member);
             await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)
         } else if(type === 'voice') {
-            if (member.voice.selfDeaf) return;
             xp = Math.round(5*multiplier);
             checkLevel(xp, member);
             await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)

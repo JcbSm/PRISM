@@ -37,8 +37,12 @@ class ReadyListener extends Listener {
         const tempMutes = (await this.client.db.query(`SELECT user_id, guild_id FROM members WHERE temp_mute IS NOT NULL`)).rows;
 
         for(const tempMute of tempMutes) {
-            let member = await (await this.client.guilds.fetch(tempMute.guild_id)).members.fetch(tempMute.user_id)
-            this.client.emit('mod-tempmute', member)
+            try {
+                let member = await (await this.client.guilds.fetch(tempMute.guild_id)).members.fetch(tempMute.user_id)
+                this.client.emit('mod-tempmute', member)
+            } catch {
+                console.log(`Missing access to tempmute for user ${tempMute.user_id} in guild ${tempMute.guild_id}`)
+            }
         };
 
         // await this.client.db.query(`DELETE FROM members WHERE guild_id = 569556194612740115`)

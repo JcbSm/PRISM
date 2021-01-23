@@ -407,6 +407,17 @@ client.functions = {
                 retries: retries,
                 time: time,
             }
+        },
+
+        helpPrompt: function helpPrompt(message, command) {
+            return {
+                start: () => {
+                    client.emit('help', message, command);
+                },
+                retry: () => {
+                    client.emit('help', message, command);
+                }
+            }
         }
 }
 

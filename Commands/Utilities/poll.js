@@ -42,8 +42,8 @@ try{
         message.delete();
 
         let sent = await message.channel.send(`${message.member} asks:`, { embed: {
-            title: `*${args.question}*`,
-            description: `\u200b\n${args.options.map(o => o.join(' - ')).join('\n')}`,
+            //title: 'POLL',
+            description: `${args.question}\n\u200b\n${args.options.map(o => o.join(' - ')).join('\n')}`,
             thumbnail: {
                 url: message.author.displayAvatarURL()
             },

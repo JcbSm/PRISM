@@ -20,7 +20,7 @@ class XpJoinVoiceListener extends Listener {
         let interval = setInterval(async function() { 
             if(channel.members.keyArray().includes(member.id)) {
                 if(channel.members.filter(m => !m.user.bot).size > 0 && !newState.selfDeaf) {
-                    await client.db.query(`UPDATE members SET xp_minutes = xp_minutes + ${timeout/3600} WHERE user_id = ${member.id} AND guild_id = ${guild.id}`);
+                    await client.db.query(`UPDATE members SET xp_minutes = xp_minutes + ${timeout/60000} WHERE user_id = ${member.id} AND guild_id = ${guild.id}`);
                     client.emit('xp-add', member, 'voice');
                 } else {
                     // Alone or Deafened

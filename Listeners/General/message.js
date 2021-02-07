@@ -49,6 +49,24 @@ class MessageListener extends Listener {
                     };
                 };
             };
+
+            const config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config);
+            
+            if(config.messages.wordFilter.any.length > 0 || config.messages.wordFilter.exact.length > 0) {
+
+                for(let word of config.messages.wordFilter.exact) {
+
+                    if(message.content.replace(/1/g, 'i') === word) message.delete();
+
+                }
+
+                for(let word of config.messages.wordFilter.any) {
+
+                    if(message.content.replace(/1/g, 'i').toLowerCase().includes(word)) message.delete();
+
+                }
+
+            };
         };
     };
 };

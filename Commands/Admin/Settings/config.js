@@ -1,4 +1,5 @@
 const { Command } = require('discord-akairo');
+const { join } = require('lodash');
 const { commandOptions } = require('../../../index');
 const MemberCommand = require('../../Information/member');
 
@@ -23,6 +24,7 @@ class ConfigCommand extends Command {
     async *args(message) {
 
         let config = JSON.parse((await this.client.db.query(`SELECT config FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0].config);
+        //console.log(config)
 
         let [setting, option, optionTwo, value, embed, client] = [null, null, null, null, null, this.client];
 
@@ -68,7 +70,7 @@ class ConfigCommand extends Command {
 
                 options = [
                     ['MESSAGE', 'MSG', '1'],
-                    ['ROLES', '2'],
+                    ['ROLES', 'ROLE', '2'],
                     ['CHANNELS', 'CHANNEL', '3']
                 ];
 
@@ -329,8 +331,9 @@ class ConfigCommand extends Command {
 
                 options = [
                     ['EMBEDS', 'EMBED', '1'],
-                    ['WARNINGS', 'WARNS', 'WARNING', 'WARN', '2']
-                ]
+                    ['WARNINGS', 'WARNS', 'WARNING', '2'],
+                    ['FILTER', 'WORDFILTER', '3'],
+                ];
 
                 option = yield {
 
@@ -441,6 +444,62 @@ class ConfigCommand extends Command {
 
                                 break;
                         };
+
+                        break;
+
+                    case 'FILTER':
+
+                        options = [
+                            ['LIST', '1'],
+                            ['EDIT', 'MODIFY', '2']
+                        ];
+
+                        optionTwo = yield {
+                            type: options,
+                            prompt: prompt(optionEmbed(options))
+                        };
+
+                        switch (optionTwo) {
+                            
+                            case 'LIST':
+
+                                break;
+                        
+                            case 'EDIT':
+
+                                embed = {
+                                    title: 'EDIT WORD FILTER',
+                                    description: 'Edit the word filter for this server.\nSeparate arguments with a `,`\n\n*To add a word:*\n`<any|exact>:<text>`\n\n*To remove a word:*\n`<remove|rm>:<text>`\n\n`ANY` matches the text at any point in a message\n`EXACT` only matches if the entire message.',
+                                    fields: [
+                                        {
+                                            name: 'EXAMPLES',
+                                            value: '`any:poop, exact:i hate you, rm:bruh`'
+                                        },
+                                        {
+                                            name: 'ANY',
+                                            value: config.messages.wordFilter.any.length > 0 ? config.messages.wordFilter.any.map(m => `\`${m}\``).join(',\n') : '`N/A`',
+                                            inline: true
+                                        },
+                                        {
+                                            name: 'EXACT',
+                                            value: config.messages.wordFilter.exact.length > 0 ? config.messages.wordFilter.exact.map(m => `\`${m}\``).join(',\n') : '`N/A`',
+                                            inline: true
+                                        }
+                                    ]
+                                };
+
+                                Object.assign(embed, defaultEmbedOptions)
+
+                                value = yield {
+
+                                    type: 'string',
+                                    match: 'rest',
+                                    prompt: prompt(embed)
+                                    
+                                };
+
+                                break;
+                        }
 
                         break;
                 }
@@ -755,6 +814,62 @@ class ConfigCommand extends Command {
 
                             config.messages.warnings.kick = args.value;
                             val = args.value;
+
+                        }
+
+                    } else if(args.option === 'FILTER') {
+
+                        if(args.optionTwo === 'LIST') {
+
+
+
+                        } else if(args.optionTwo === 'EDIT') {
+
+                            let filter = config.messages.wordFilter;
+
+                            let [words, word, action] = [args.value.split(','), undefined];
+                            let [removed, any, exact, unresolved] = [[], [], [], []];
+
+                            for (let w of words) {
+
+                                w = w.trim();
+                                
+                                [action, word] = [w.split(':')[0], w.split(':')[1]];
+
+                                if(action === 'rm' || action === 'remove') {
+                                    
+                                    if(filter.any.filter(s => s === word).length > 0 || filter.exact.filter(s => s === word).length > 0) {
+
+                                        filter.any = filter.any.filter(s => s !== word);
+                                        filter.exact = filter.exact.filter(s => s !== word);
+                                        removed.push(word)
+
+                                    } else {
+
+                                        unresolved.push(w)
+
+                                    }
+
+                                } else if(action === 'any') {
+
+                                    filter.any.push(word.trim().toLowerCase());
+                                    any.push(word.trim().toLowerCase());
+
+                                } else if(action === 'exact') {
+
+                                    filter.exact.push(word.trim().toLowerCase());
+                                    exact.push(word.trim().toLowerCase());
+
+                                } else {
+
+                                    unresolved.push(w);
+                                    
+                                }
+
+                            }
+
+                            config.messages.wordFilter = filter;
+                            val = `Modified the word filter with the following values:\n\n**ANY**\n${any.map(m => `\`${m}\``).join(',\n')}\n\n**EXACT**\n${exact.map(m => `\`${m}\``).join(',\n')}\n\n**REMOVED**\n${removed.map(m => `\`${m}\``).join(',\n')}\n\n**UNRESOLVED**\n${exact.map(m => `\`${m}\``).join(',\n')}`
 
                         }
 

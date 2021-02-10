@@ -12,6 +12,7 @@ class MessageReactionAddListener extends Listener {
 
         if(reaction.partial) reaction = await reaction.fetch();
 
+        //RoleReaction
         const reactionMessage = (await this.client.db.query(`SELECT * FROM reaction_messages WHERE message_url = '${reaction.message.url}'`)).rows[0];
 
         if(reactionMessage) {
@@ -29,6 +30,24 @@ class MessageReactionAddListener extends Listener {
             };
 
         };
+
+        //Pin Reaction
+        if(reaction.emoji.name === '📌') {
+        
+            const { pins_channel_id, pins_reactions } = (await this.client.db.query(`SELECT pins_channel_id, pins_reactions FROM guilds WHERE guild_id = ${reaction.message.guild.id}`)).rows[0];
+            const pinChannel = await this.client.channels.fetch(pins_channel_id);
+
+            if (pinChannel && pins_reactions > 0) {
+                
+                if(reaction.count === pins_reactions && !reaction.users.cache.keyArray().includes(this.client.user.id)) {
+                    
+                    this.client.emit('util-pin', reaction.message, pinChannel)
+                    await reaction.message.react('📌')
+                    
+                }
+
+            }
+        }
 
     };
 };

@@ -15,7 +15,7 @@ class MessageListener extends Listener {
 
         if(message.channel.type === 'text') {
 
-            if(message.content === 'Lol ok' && message.auhtor.id === '809055749095424080') {
+            if(message.content === 'Lol ok' && message.author.id === '809055749095424080') {
                 message.reply('lol ok')
             }
 

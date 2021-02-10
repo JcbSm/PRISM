@@ -15,10 +15,6 @@ class MessageListener extends Listener {
 
         if(message.channel.type === 'text') {
 
-            if(message.author.id === '809055749095424080') {
-                message.channel.send('lol ok')
-            }
-
             if(!(await this.client.db.query(`SELECT guild_id FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0]) {
                 this.client.emit('guildCreate', message.guild)
             };

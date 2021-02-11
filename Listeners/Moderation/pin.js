@@ -11,7 +11,7 @@ class PinListener extends Listener {
     async exec(message, channel) {
 
         let embed = {
-            description: message.content,
+            description: `\u200b\n${message.content}\n\u200b`,
             fields: [
                 {
                     name: 'AUTHOR',
@@ -56,6 +56,7 @@ class PinListener extends Listener {
 
         channel.send({embed: embed});
         message.react('📌')
+        return message.channel.send(`***${message.member}'s message has been pinned in ${channel}.***`)
     };
 };
 

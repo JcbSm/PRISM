@@ -36,7 +36,7 @@ class MessageReactionAddListener extends Listener {
 
             if(reaction.message.author.id === user.id) {
 
-                reaction.remove();
+                reaction.users.remove(user.id);
         
             } else {
 

@@ -47,10 +47,10 @@ class EmbedCreateCommand extends Command {
                     embed.color = this.client.functions.resolveHex(value.trim()) === '#FFFFFF' ? '#FCFCFC' : this.client.functions.resolveHex(value.trim());
                     break;
                 case 'thumbnail':
-                    embed.thumbnail.url = value;
+                    embed.thumbnail = {url: value};
                     break;
                 case 'image':
-                    embed.image.url = value;
+                    embed.image = {url: value};
                     break;
             }
         }

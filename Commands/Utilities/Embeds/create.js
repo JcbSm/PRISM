@@ -51,8 +51,11 @@ class EmbedCreateCommand extends Command {
                     break;
                 case 'image':
                     embed.image.url = value;
+                    break;
             }
         }
+
+        if(!embed.color) embed.color = await this.client.config.colors.embed(message.guild)
 
         return { channel, embed }
 

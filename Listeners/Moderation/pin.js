@@ -11,7 +11,7 @@ class PinListener extends Listener {
     async exec(message, channel) {
 
         let embed = {
-            description: `\u200b\n${message.content}\n\u200b`,
+            description: message.content !== '' ? `\u200b\n${message.content}\n\u200b` : null,
             fields: [
                 {
                     name: 'AUTHOR',

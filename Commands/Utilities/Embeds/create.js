@@ -31,9 +31,10 @@ class EmbedCreateCommand extends Command {
         }
 
         let [arr, embed] = [options.split(';'), {}];
+        
         for(let arg of arr) {
             const [option, value] = [arg.split(':')[0].trim().toLowerCase(), arg.split(':').slice(1).join(':')];
-            console.log({option: option, value: value})
+            
             switch(option) {
                 case 'title':
                     embed.title = value;
@@ -63,7 +64,6 @@ class EmbedCreateCommand extends Command {
 
     async exec(message, args) {
 
-        console.log(args.embed)
         await args.channel.send({embed: args.embed})
         return message.react('👌')
 

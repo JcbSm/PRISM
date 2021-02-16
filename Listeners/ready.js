@@ -28,6 +28,7 @@ class ReadyListener extends Listener {
             try {
                 member = await (await this.client.guilds.fetch(voiceMembers[i].guild_id)).members.fetch(voiceMembers[i].user_id);
             } catch {
+                console.log(`Unable to resolve:`, voiceMembers[i])
                 continue;
             }
             if(member.voice.channel) {

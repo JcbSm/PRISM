@@ -98,7 +98,7 @@ class QueryCommand extends Command {
                         fields: fieldArr
                     }})
 
-                    //console.log(res);
+                    console.log(res);
 
                 } catch(e) {console.log(e)}
             })

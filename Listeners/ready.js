@@ -24,7 +24,12 @@ class ReadyListener extends Listener {
 
         for(let i = 0; i < voiceMembers.length; i++) {
             if(this.client.testing && voiceMembers[i].guild_id !== '569556194612740115') continue;
-            let member = await (await this.client.guilds.fetch(voiceMembers[i].guild_id)).members.fetch(voiceMembers[i].user_id);
+            let member;
+            try {
+                member = await (await this.client.guilds.fetch(voiceMembers[i].guild_id)).members.fetch(voiceMembers[i].user_id);
+            } catch {
+                continue;
+            }
             if(member.voice.channel) {
                 this.client.emit('xp-joinVoice', null, member.voice)
                 this.client.emit('stats-joinVoice', null, member.voice)

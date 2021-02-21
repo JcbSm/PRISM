@@ -90,7 +90,7 @@ class CallCommand extends Command {
                 await this.client.db.query(`INSERT INTO calls 
                     (guild_id, user_id, voice_channel_id, text_channel_id) 
                     VALUES (${message.guild.id}, ${message.author.id}, ${voiceChannel.id}, ${textChannel.id}
-                )`, (err, res) => console.log(err, res));
+                )`);
 
                 await message.react('👌');
 

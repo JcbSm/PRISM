@@ -58,14 +58,15 @@ module.exports = UserLimitCommand
 */
 
 const { Command } = require('discord-akairo');
+const { values } = require('lodash');
 const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
     id: 'userlimit',
     aliases: [],
     description: {
-        usage: ['(value)'],
-        content: 'Change the user limit on a call'
+        usage: ['(size)'],
+        content: 'Change the user limit on a call. Anything from `1-99`.\nSet to `0` for unlimited'
     },
     channel: 'guild',
     typing: true,
@@ -81,7 +82,11 @@ class UserLimitCommand extends Command {
     async *args(message) {
 
         const num = yield {
-            type: 'integer',
+            type: (message, phrase) => {
+                let value = Math.floor(Number(phrase));
+                if(value < 0 || value > 99) value = undefined;
+                return value;
+            },
             prompt: this.client.functions.helpPrompt(message, this)
         };
 

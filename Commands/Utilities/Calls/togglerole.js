@@ -2,8 +2,8 @@ const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
-    id: 'toggleview',
-    aliases: ['togglevisibility'],
+    id: 'togglerole',
+    aliases: ['toggleview', 'togglevisibility'],
     description: {
         usage: ['(role)'],
         content: 'Toggle the visibility of the voice channel.\nIf no role is given, it will default to `@everyone`'
@@ -14,7 +14,7 @@ const commandInfo = commandOptions({
     userPermissions: [],
 }, __dirname)
 
-class ToggleViewCommand extends Command {
+class ToggleRoleCommand extends Command {
     constructor() {
         super(commandInfo.id, commandInfo);
     };
@@ -75,4 +75,4 @@ class ToggleViewCommand extends Command {
     };
 };
 
-module.exports = ToggleViewCommand;
+module.exports = ToggleRoleCommand;

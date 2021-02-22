@@ -67,7 +67,7 @@ class ToggleTextCommand extends Command {
             const textChannel = message.guild.channels.cache.get(call.text_channel_id);
             
             if(args.members.all) {
-                //console.log(voiceChannel.permissionOverwrites)
+                
                 for(const [id, userPermissions] of voiceChannel.permissionOverwrites.filter(p => p.type === 'member')) {
                     if(!userPermissions.allow.serialize().VIEW_CHANNEL && !textChannel.permissionOverwrites.get(id).allow.serialize().VIEW_CHANNEL) {
                         textChannel.createOverwrite(id, { VIEW_CHANNEL: true });

@@ -69,7 +69,8 @@ class ToggleTextCommand extends Command {
             if(args.members.all) {
                 
                 for(const [id, userPermissions] of voiceChannel.permissionOverwrites.filter(p => p.type === 'member')) {
-                    if(!userPermissions.allow.serialize().VIEW_CHANNEL && !textChannel.permissionOverwrites.get(id).allow.serialize().VIEW_CHANNEL) {
+
+                    if(userPermissions.allow.serialize().VIEW_CHANNEL && (!textChannel.permissionOverwrites.get(id) || !textChannel.permissionOverwrites.get(id).allow.serialize().VIEW_CHANNEL)) {
                         textChannel.createOverwrite(id, { VIEW_CHANNEL: true });
                         allow.push(id);
                     }

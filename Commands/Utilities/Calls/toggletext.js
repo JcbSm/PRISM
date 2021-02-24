@@ -105,7 +105,7 @@ class ToggleTextCommand extends Command {
 
             return message.channel.send({ embed: {
                 title: 'UPDATED CALL PERMISSIONS',
-                description: `Toggled voice channel view for users`,
+                description: `Toggled text channel view for users`,
                 fields: fields,
                 color: await this.client.config.colors.embed(message.guild),
                 timestamp: Date.now()

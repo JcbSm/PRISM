@@ -20,13 +20,15 @@ class TempMuteListener extends Listener {
 
             if(temp_mute < Date.now()) {
                 await client.db.query(`UPDATE members SET temp_mute = null WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)
+                if(member.roles.cache.has(mute_role_id)) {
+                    member.user.send({ embed: {
+                        description: `You've been unmuted in **${member.guild.name}**.`,
+                        timestamp: Date.now(),
+                        color: client.config.colors.green
+                    }});
+                }
                 member.roles.remove(mute_role_id)
-                member.user.send({ embed: {
-                    title: 'ALERT',
-                    description: `You've been unmuted in **${member.guild.name}**.`,
-                    timestamp: Date.now(),
-                    color: client.config.colors.green
-                }});
+                console.log('Ended tempmute for ' + member.user.tag)
                 clearInterval(interval)
             } else {
                 if(!member.roles.cache.has(mute_role_id)) {
@@ -35,7 +37,7 @@ class TempMuteListener extends Listener {
                 };
             }
 
-        }, 20000);
+        }, 15 * 1000);
     };
 };
 

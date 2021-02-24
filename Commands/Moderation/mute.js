@@ -135,23 +135,28 @@ class MuteCommand extends Command {
             };
 
             args.member.roles.add(args.mute_role_id)
+            console.log(milli)
+            if(milli >= 1000*60*60) {
 
-            args.member.user.send({ embed: {
-                title: 'WARNING',
-                description: await this.client.functions.parseText(args.config.messages.warnings.mute, args.member),
-                fields: [
-                    {
-                        name: 'REASON',
-                        value: args.reason,
-                    },
-                    {
-                        name: 'DURATION',
-                        value: `\`${timeStr}\``,
-                    }
-                ],
-                timestamp: Date.now(),
-                color: this.client.config.colors.red
-            }});
+                args.member.user.send({ embed: {
+                    description: await this.client.functions.parseText(args.config.messages.warnings.mute, args.member),
+                    fields: [
+                        {
+                            name: 'REASON',
+                            value: args.reason,
+                        },
+                        {
+                            name: 'DURATION',
+                            value: `\`${timeStr}\``,
+                        }
+                    ],
+                    footer: {
+                        text: milli > 0 ? 'You will be unmuted' : null
+                    },  
+                    timestamp: Date.now() + milli,
+                    color: this.client.config.colors.red
+                }});
+            }
 
             message.channel.send({ embed: {
 

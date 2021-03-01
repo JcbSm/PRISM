@@ -1,4 +1,5 @@
 const { Listener } = require('discord-akairo');
+const { NewsChannel } = require('discord.js');
 
 class VoiceStateUpdateListener extends Listener {
     constructor() {
@@ -22,6 +23,9 @@ class VoiceStateUpdateListener extends Listener {
             this.client.emit('xp-joinVoice', oldState, newState);
             this.client.emit('stats-joinVoice', oldState, newState);
             this.client.emit('log-voiceStateJoin', newState);
+
+            if(newState.channel.id === newState.guild.afkChannelID) this.client.db.query(`UPDATE members SET afk_count = afk_count + 1 WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`);
+
         } else if(!newState.channel && oldState.channel) {
             //Leave VC
             await this.client.db.query(`UPDATE members SET voice = false WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)
@@ -35,6 +39,7 @@ class VoiceStateUpdateListener extends Listener {
             this.client.emit('xp-joinVoice', oldState, newState);
             this.client.emit('stats-joinVoice', oldState, newState);
             this.client.emit('log-voiceStateSwitch', oldState, newState);
+            if(newState.channel.id === newState.guild.afkChannelID) this.client.db.query(`UPDATE members SET afk_count = afk_count + 1 WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`);
             if(callChannels.map(c => c.voice_channel_id).includes(oldState.channel.id)) {
                 this.client.emit('calls-countdown', oldState.channel.id, callChannels.find(c => c.voice_channel_id === oldState.channel.id).call_id)
             }

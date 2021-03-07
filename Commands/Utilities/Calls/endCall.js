@@ -32,7 +32,7 @@ class EndCallCommand extends Command {
                 client.emit('calls-end', call.call_id); 
             }, 10000);
 
-            await message.reply('This call will be deleted in 10 seconds, type `cancel` to cancel');
+            await message.reply('This call will be deleted in `10` seconds, type `cancel` to cancel');
             await message.channel.awaitMessages((m => m.author.id === message.author.id && m.content.toLowerCase() === 'cancel'), {
                 max: 1,
                 time: 10000

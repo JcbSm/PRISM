@@ -19,17 +19,17 @@ class UnmuteCommand extends Command {
         super(commandInfo.id, commandInfo);
     };
 
-    *args() {
+    *args(message) {
 
         const member = yield {
 
             type: 'member',
             match: 'rest',
             prompt: {
-                start: () => {
+                start: (message) => {
                     this.client.emit('help', message.member, this);
                 },
-                retry: () => {
+                retry: (message) => {
                     this.client.emit('help', message.member, this);
                 }
             }

@@ -41,7 +41,7 @@ class ClearCommand extends Command {
         
         if(args.amount > 0 && args.amount < 100) {
 
-            await message.channel.bulkDelete(Math.floor(args.amount)+1);
+            await message.channel.bulkDelete(Math.floor(args.amount)+1, true);
             let sent = await message.channel.send({ embed: {
                 description: `✅ Cleared ${Math.floor(args.amount)} messages.`,
                 color: this.client.config.colors.green

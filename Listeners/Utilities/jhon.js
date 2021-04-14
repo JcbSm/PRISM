@@ -10,7 +10,7 @@ class JohnListener extends Listener {
 
     exec(message) {
 
-        if(message.channel.id === '831707394995257354' && message.content !== 'prism') return message.delete();
+        if(message.channel.id === '831707394995257354' && message.content !== 'amogus') return message.delete();
         
     };
 }

@@ -79,7 +79,7 @@ class KickCommand extends Command {
 
         if(args.confirm) {
             
-            //await args.member.kick(args.reason)
+            await args.member.kick(args.reason)
     
             message.channel.send({ embed: {
 

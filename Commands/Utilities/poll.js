@@ -20,22 +20,27 @@ class PollCommand extends Command {
     };
 
     *args(message) {
-try{
-        const phrases = message.util.parsed.content.split(';');
 
-        let [phrase, question, options] = [,,[]]
-        for(let i = 0; i < phrases.length; i++) {
-            phrase = phrases[i].trim();
-            if(phrase === '') continue;
-            i === 0 ? question = phrase : options.push([Object.values(this.client.config.characters).slice(11)[i-1], phrase]);
-        }
+        try{
 
-        return { question, options }
-    }catch(e) {console.log(e)}
+            const phrases = message.util.parsed.content.split(';');
+
+            if(phrases.length === 1 && phrases[0] === '') return this.client.emit('help', message, this)
+
+            let [phrase, question, options] = [,,[]]
+            for(let i = 0; i < phrases.length; i++) {
+                phrase = phrases[i].trim();
+                if(phrase === '') continue;
+                i === 0 ? question = phrase : options.push([Object.values(this.client.config.characters).slice(11)[i-1], phrase]);
+            }
+
+            return { question, options }
+
+        }catch(e) {console.log(e)}
     };
 
     async exec(message, args) {
-
+        
         if(!args.question) return 'Please provide a question';
         if(args.options.length < 2 || args.options.length > 20) return message.reply('Please provide 2-20 options.');
 

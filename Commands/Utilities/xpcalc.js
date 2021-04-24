@@ -1,4 +1,4 @@
-const { Command, SequelizeProvider } = require('discord-akairo');
+const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../index');
 
 const commandInfo = commandOptions({

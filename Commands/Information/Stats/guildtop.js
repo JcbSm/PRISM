@@ -181,9 +181,7 @@ class GuildTopCommand extends Command {
 
             data.sort((a, b) => sortValues(a, b))
 
-        }
-
-        
+        }        
 
         let arr = [];
         let perPage = 10;

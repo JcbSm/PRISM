@@ -131,6 +131,8 @@ class FightCommand extends Command {
                     outline: '#ffffff'
                 }
 
+                console.log(colors.health)
+
                 const canvas = createCanvas(924, 396)
                 const ctx = canvas.getContext('2d')
 

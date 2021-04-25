@@ -151,7 +151,7 @@ class FightCommand extends Command {
                     ctx.lineTo(canvas.width-150, 110);
                     ctx.stroke()
 
-                    ctx.fillStyle = colors.health.rotate(-(100-fighters[1].hp))
+                    ctx.fillStyle = colors.health//.rotate(-(100-fighters[1].hp))
                     ctx.beginPath();
                     ctx.moveTo(canvas.width-150, 83);
                     ctx.lineTo(canvas.width-(150 + (418 * fighters[1].hp/100) + 25), 83)
@@ -168,7 +168,7 @@ class FightCommand extends Command {
                     ctx.lineTo(150, canvas.height-110)
                     ctx.stroke()
 
-                    ctx.fillStyle = colors.health.rotate(-(100-fighters[0].hp))
+                    ctx.fillStyle = colors.health//.rotate(-(100-fighters[0].hp))
                     ctx.beginPath();
                     ctx.moveTo(150, canvas.height-83);
                     ctx.lineTo(150 + (418 * fighters[0].hp/100), canvas.height-83)

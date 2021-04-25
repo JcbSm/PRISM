@@ -55,7 +55,7 @@ class FightCommand extends Command {
         }})
 
         const responses = ['yes', 'y', 'no', 'n']
-        const response = (await message.channel.awaitMessages(m => m.author.id === m.member.id && responses.includes(m.content.toLowerCase()), {max: 1, time: 30000}))//;
+        const response = (await message.channel.awaitMessages(m => m.author.id === m.member.id && responses.includes(m.content.toLowerCase()), {max: 1, time: 60000}));
         const accept = response.size > 0 ? response.first().content.toLowerCase().includes('y') ? true : false : false
 
         if(!accept) {

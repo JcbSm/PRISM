@@ -119,7 +119,7 @@ class FightCommand extends Command {
                 };
 
                 surrender() {
-                    console.log(`${this.member.displayName} surrendered`)
+                    this.hp = 0
                 };
 
             }
@@ -296,7 +296,7 @@ class FightCommand extends Command {
 
                     case 4:
 
-                        fighters[0].hp = 0;
+                        fighters[0].surrender()
                         outcome.reason = 'surrender'
                         break;
                 }

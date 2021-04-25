@@ -4,6 +4,9 @@ const { loadImage, createCanvas, registerFont } = require('canvas');
 const Discord = require('discord.js');
 const Color = require('color')
 
+console.log(require('color').version)
+console.log(require('canvas').version)
+
 const commandInfo = commandOptions({
     id: 'fight',
     aliases: ['duel'],
@@ -138,7 +141,7 @@ class FightCommand extends Command {
 
                 ctx.save();
 
-                ctx.fillStyle = colors.health
+                ctx.fillStyle = colors.outline
                 ctx.fillRect(0, 0, canvas.width, canvas.height)
 
                 // Health Bars

@@ -138,6 +138,9 @@ class FightCommand extends Command {
 
                 ctx.save();
 
+                ctx.fillStyle = colors.health
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+
                 // Health Bars
 
                     // Opponent
@@ -173,7 +176,7 @@ class FightCommand extends Command {
                     ctx.lineTo(150 + (418 * fighters[0].hp/100), canvas.height-83)
                     ctx.lineTo(150 + (418 * fighters[0].hp/100) + 25, canvas.height-107)
                     ctx.lineTo(150, canvas.height-107)
-                    ctx.fillStyle = colors.health//.rotate(fighters[0].hp-100)
+                    ctx.fillStyle = colors.health.rotate(fighters[0].hp-100)
                     ctx.fill()
 
                 ctx.save();

@@ -61,4 +61,4 @@ class DuelCommand extends Command {
 
 };
 
-module.exports = DuelCommand;
+//module.exports = DuelCommand;

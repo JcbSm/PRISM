@@ -43,19 +43,6 @@ class DuelCommand extends Command {
                 atk: 5
             })
         ], message.channel, this.client);
-
-        const rounds = duel.rounds();
-
-        let i = 0;
-
-        // while(i < 10) {
-        //     console.log((await rounds.next()).value);
-        //     i++;
-        // };
-
-        console.log(new Weapon({
-            dmg: 10
-        }))
         
     };
 

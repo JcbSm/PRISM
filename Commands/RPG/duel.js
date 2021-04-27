@@ -42,7 +42,7 @@ class DuelCommand extends Command {
                 hp: 100,
                 atk: 5
             })
-        ], message.channel, this.client);
+        ], message.channel, this.client); 
         
     };
 

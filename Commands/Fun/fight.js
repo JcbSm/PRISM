@@ -4,9 +4,6 @@ const { loadImage, createCanvas, registerFont } = require('canvas');
 const Discord = require('discord.js');
 const Color = require('color')
 
-console.log(require('color').version)
-console.log(require('canvas').version)
-
 const commandInfo = commandOptions({
     id: 'fight',
     aliases: ['duel'],
@@ -93,7 +90,7 @@ class FightCommand extends Command {
 
                 attack(fighter) {
                     
-                    let dmg = this.atk - this.def + client.functions.rng(-1, 3);
+                    let dmg = this.atk - figher.def + client.functions.rng(-1, 3);
                     if (dmg < 0) dmg = 0;
                     fighter.hp -= dmg;
                     return dmg
@@ -140,9 +137,6 @@ class FightCommand extends Command {
                 const ctx = canvas.getContext('2d')
 
                 ctx.save();
-
-                // ctx.fillStyle = colors.outline
-                // ctx.fillRect(0, 0, canvas.width, canvas.height)
 
                 // Health Bars
 
@@ -244,7 +238,7 @@ class FightCommand extends Command {
                             inline: true
 
                         }, {
-                            name: '3. SHIELD BERAK',
+                            name: '3. SHIELD BREAK',
                             value: 'Weaken your opponents defence',
                             inline: true
 
@@ -342,4 +336,4 @@ class FightCommand extends Command {
     };
 };
 
-module.exports = FightCommand;
+//module.exports = FightCommand;

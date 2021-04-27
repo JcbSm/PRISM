@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "name": "dagger",
+        "class": "ONE_HANDED",
+        "dmg": 5,
+        "weight": 1
+    },
+    {
+        "id": 2,
+        "name": "longsword",
+        "class": "ONE_HANDED",
+        "dmg": 12,
+        "weight": 6
+    },
+    {
+        "id": 3,
+        "name": "shortsword",
+        "class": "ONE_HANDED",
+        "dmg": 10,
+        "weight": 4
+    },
+    {
+        "id": 4,
+        "name": "katana",
+        "class": "TWO_HANDED",
+        "dmg": 20,
+        "weight": 8
+    },
+    {
+        "id": 5,
+        "name": "longbow",
+        "class": "BOW",
+        "dmg": 15,
+        "weight": 6
+    }
+]

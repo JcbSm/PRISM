@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "name": "rags",
+        "class": "CLOTHING",
+        "slots": [2],
+        "def": 1,
+        "weight": 1
+    }
+]

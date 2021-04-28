@@ -17,7 +17,8 @@ const commandInfo = commandOptions({
                     ['VOICE', 'VC'],
                     ['MUTED', 'MUTE'],
                     ['AFK'],
-                    ['COUNTING', 'COUNTS', 'COUNT']
+                    ['COUNTING', 'COUNTS', 'COUNT'],
+                    ['LEVELS', 'RANKS', 'XP', 'LEVEL']
                 ]
             }
         ]
@@ -100,6 +101,8 @@ class TopCommand extends Command {
                     return `\`${client.functions.groupDigits(val)}\` • \`${Math.round((10000*val)/(data[0].counting_count))/100}%\``
                 }
                 break;
+            case 'LEVELS':
+                return this.handler.findCommand('levels').exec(message, { page: args.page, type: args.type});
             default:
                 return message.reply('An error occurred.')
         };

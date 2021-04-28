@@ -10,19 +10,20 @@ class Monster {
             spd = 0,
             str = 0,
             weapons = [],
-            apparel = []
+            apparel = [],
+            activeEffects = []
 
         } = options;
 
         this.level = level;
         this.name = name;
-        this.hp = baseHP * level/2;
+        this.hp = baseHP * level;
         this.def = def;
         this.spd = spd;
         this.str = str;
         this.weapons = weapons;
         this.apparel = apparel;
-        this.activeEffects = [];
+        this.activeEffects = activeEffects;
 
     }
 

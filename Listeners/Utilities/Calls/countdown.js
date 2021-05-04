@@ -17,7 +17,7 @@ class CallsCountdownListener extends Listener {
         let textChannel = await this.client.channels.fetch(text_channel_id)
         
         if (persistent) return textChannel.send({ embed: {
-            description: `Everyone left the call. Persistent calls will not delete automatically, to end the call user the \`-endcall\` command.`,
+            description: `Everyone left the call. Persistent calls will not delete automatically, to end the call use the \`-endcall\` command.`,
             color: await client.config.colors.embed(channel.guild)
         }});
         

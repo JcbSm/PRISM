@@ -9,7 +9,6 @@ class CallsEndListener extends Listener {
     };
 
     async exec(id) {
-        console.log(1, id)
         try {
         
             const call = (await this.client.db.query(`SELECT * FROM calls WHERE call_id = ${id}`)).rows[0];
@@ -17,7 +16,7 @@ class CallsEndListener extends Listener {
             await (await this.client.channels.fetch(call.voice_channel_id)).delete();
             await (await this.client.channels.fetch(call.text_channel_id)).delete();
 
-            //await this.client.db.query(`DELETE FROM calls WHERE call_id = ${call.call_id}`)
+            await this.client.db.query(`DELETE FROM calls WHERE call_id = ${call.call_id}`)
     
         } catch (e) {
             console.log(e)

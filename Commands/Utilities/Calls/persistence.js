@@ -11,7 +11,7 @@ const commandInfo = commandOptions({
     channel: 'guild',
     typing: false,
     clientPermissions: ['SEND_MESSAGES'],
-    userPermissions: []
+    userPermissions: ['MANAGE_CHANNELS']
 }, __dirname);
 
 class PersistentCommand extends Command {

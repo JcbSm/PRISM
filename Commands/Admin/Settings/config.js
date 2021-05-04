@@ -1,7 +1,5 @@
 const { Command } = require('discord-akairo');
-const { join } = require('lodash');
 const { commandOptions } = require('../../../index');
-const MemberCommand = require('../../Information/member');
 
 const commandInfo = commandOptions({
     id: 'config',

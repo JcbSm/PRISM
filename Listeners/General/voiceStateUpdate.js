@@ -1,5 +1,4 @@
 const { Listener } = require('discord-akairo');
-const { NewsChannel } = require('discord.js');
 
 class VoiceStateUpdateListener extends Listener {
     constructor() {

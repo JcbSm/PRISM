@@ -12,7 +12,7 @@ const commandInfo = commandOptions({
         
     },
     clientPermissions: ['MUTE_MEMBERS', 'MANAGE_ROLES'],
-    userPermissions: ['MUTE_MEMBERS', 'MANAGE_ROLES'],
+    userPermissions: ['MUTE_MEMBERS'],
 }, __dirname);
 
 class MuteCommand extends Command {

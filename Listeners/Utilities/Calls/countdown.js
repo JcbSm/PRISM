@@ -14,7 +14,7 @@ class CallsCountdownListener extends Listener {
 
         const { text_channel_id, persistent } = (await this.client.db.query(`SELECT text_channel_id, persistent FROM calls WHERE call_id = ${callID}`)).rows[0];
 
-        let textChannel = await this.client.channels.fetch(text_channel_id)
+        let textChannel = await this.client.channels.fetch(text_channel_id);
         
         if (persistent) return textChannel.send({ embed: {
             description: `Everyone left the call. Persistent calls will not delete automatically, to end the call use the \`-endcall\` command.`,

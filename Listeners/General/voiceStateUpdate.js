@@ -29,7 +29,8 @@ class VoiceStateUpdateListener extends Listener {
             //Leave VC
             await this.client.db.query(`UPDATE members SET voice = false WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`)
             this.client.emit('log-voiceStateLeave', oldState);
-            if(callChannels.map(c => c.voice_channel_id).includes(oldState.channel.id)) {
+            
+            if(oldState.channel.members.size === 0 && callChannels.map(c => c.voice_channel_id).includes(oldState.channel.id)) {
                 this.client.emit('calls-countdown', oldState.channel.id, callChannels.find(c => c.voice_channel_id === oldState.channel.id).call_id)
             }
         } else if(oldState.channel && newState.channel && newState.channel.id !== oldState.channel.id) {
@@ -39,7 +40,8 @@ class VoiceStateUpdateListener extends Listener {
             this.client.emit('stats-joinVoice', oldState, newState);
             this.client.emit('log-voiceStateSwitch', oldState, newState);
             if(newState.channel.id === newState.guild.afkChannelID) this.client.db.query(`UPDATE members SET afk_count = afk_count + 1 WHERE user_id = ${newState.member.id} AND guild_id = ${newState.guild.id}`);
-            if(callChannels.map(c => c.voice_channel_id).includes(oldState.channel.id)) {
+            
+            if(oldState.channel.members.size === 0 && callChannels.map(c => c.voice_channel_id).includes(oldState.channel.id)) {
                 this.client.emit('calls-countdown', oldState.channel.id, callChannels.find(c => c.voice_channel_id === oldState.channel.id).call_id)
             }
         } else {

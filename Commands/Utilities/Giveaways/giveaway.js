@@ -40,7 +40,9 @@ class GiveawayCommand extends Command {
             timestamp: Date.now()
         }});
 
-        await sent.react('🎉')
+        await sent.react('🎉');
+
+        await message.delete();
 
     };
 };

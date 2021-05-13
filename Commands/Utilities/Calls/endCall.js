@@ -8,7 +8,7 @@ const commandInfo = commandOptions({
     typing: false,
     description: {
         usage: [''],
-        content: 'Ends a user generated call'
+        content: 'Ends a user generated call\nMust be done in the call\'s text channel'
     },
     clientPermissions: ['MANNAGE_CHANNELS', 'SEND_MESSAGES'],
     userPermissions: []
@@ -47,7 +47,7 @@ class EndCallCommand extends Command {
             })
 
         } else {
-            message.reply('No user call found.')
+            return message.reply('No user call found. Please type this command in the text channel for a call.')
         }
     };
 };

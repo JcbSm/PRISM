@@ -113,7 +113,7 @@ class ToggleTextCommand extends Command {
         
         } else {
 
-            return message.reply('No user call found.')
+            return message.reply('No user call found. Please type this command in the text channel for a call.')
 
         }
 

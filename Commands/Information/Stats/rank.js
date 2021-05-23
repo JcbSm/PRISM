@@ -77,9 +77,18 @@ class RankCommand extends Command {
 
             ctx.save()
 
-            //Fill BG
-            ctx.fillStyle = colors.bg
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            if (args.member.id === this.client.ownerID) {
+
+                let bg = await loadImage('https://media.discordapp.net/attachments/519267758039629824/768935657073672232/unknown.png?width=400&height=113');
+                ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
+
+            } else {
+
+                //Fill BG
+                ctx.fillStyle = colors.bg
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+            }
             
             //Outline
             ctx.lineWidth = 10

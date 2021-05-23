@@ -50,7 +50,7 @@ class RankCardCommand extends Command {
                 
                 let embed = {
                     title: 'RANKCARD COLORS',
-                    description: '`1` • Type `view` to view your current colour.\n`2` • Type `reset`/`default` to set it back to the server default.\n`3` • Or type a new color.'
+                    description: 'Type `view` to view your current colour.\n\nType `reset`/`default` to set it back to the server default.\n\nOr type a new color.'
                 }
                 Object.assign(embed, defaultOptions);
 
@@ -73,6 +73,7 @@ class RankCardCommand extends Command {
     async exec(message, { option, value }) {
 
         switch (option) {
+
             case 'COLOR':
 
                 if(value === 'VIEW') {

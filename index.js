@@ -258,7 +258,7 @@ client.functions = {
         resolveHex: function resolveHex(input) {
             const Color = require('color');
             try {
-                return Color(input).hex()
+                return Color(input.toLowerCase()).hex()
             } catch (e) {
                 return undefined
             }

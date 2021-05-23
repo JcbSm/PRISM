@@ -30,7 +30,7 @@ class RankCardCommand extends Command {
     async *args(message) {
 
         const { prompt, optionEmbed } = this.client.functions;
-        const { defaultOptions } = this.client.config.presets;
+        const defaultOptions = await this.client.config.presets.defaultOptions(message.guild);
 
         let options = [
             ['COLOR', 'COLOUR', '1']
@@ -38,16 +38,36 @@ class RankCardCommand extends Command {
 
         const option = yield {
             type: options,
-            prompt: prompt(optionEmbed(options, await defaultOptions(message.guild)))
+            prompt: prompt(optionEmbed(options, defaultOptions))
             
         };
 
-        const value = yield {
-            type: 'string',
-            default: 'VIEW'
-        };
+        let [optionTwo, value] = [];
 
-        return { option, value }
+        switch (option) {
+
+            case 'COLOR':
+                
+                let embed = {
+                    title: 'RANKCARD COLORS',
+                    description: '`1` • Type `view` to view your current colour.\n`2` • Type `reset`/`default` to set it back to the server default.\n`3` • Or type a new color.'
+                }
+                Object.assign(embed, defaultOptions);
+
+                value = yield {
+                    match: 'rest',
+                    prompt: prompt(embed)
+                };
+
+                value = value.toUpperCase();
+
+                break;
+        
+            default:
+                break;
+        }
+
+        return { option, optionTwo, value }
     };
 
     async exec(message, { option, value }) {
@@ -65,11 +85,12 @@ class RankCardCommand extends Command {
                     }})
                 }
 
-                if(value.toLowerCase() === 'null' || value.toLowerCase() === 'default' || value.toLowerCase() === 'reset') {
+                if(value === 'NULL' || value === 'DEFAULT' || value === 'RESET') {
                     await this.client.db.query(`UPDATE members SET rank_card_color = null WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`)
                     value = null
                 } else {
 
+                    console.log(value)
                     let color = this.client.functions.resolveHex(value);
 
                     if(color) {

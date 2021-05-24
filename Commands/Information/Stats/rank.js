@@ -76,11 +76,9 @@ class RankCommand extends Command {
             }
 
             ctx.save()
-
-            if (memberData.rank_card_bg_id >= 1) {
-                console.log(memberData.rank_card_bg_id)
+            
+            if (this.client.config.backgrounds().map(b => Number(b.id)).includes(memberData.rank_card_bg_id)) {
                 const bg = this.client.config.backgrounds().find(bg => bg.id == memberData.rank_card_bg_id);
-                console.log(bg)
                 let img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 

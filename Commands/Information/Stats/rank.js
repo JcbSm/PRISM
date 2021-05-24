@@ -77,10 +77,12 @@ class RankCommand extends Command {
 
             ctx.save()
 
-            if (args.member.id === this.client.ownerID) {
-
-                let bg = await loadImage('https://media.discordapp.net/attachments/519267758039629824/768935657073672232/unknown.png?width=400&height=113');
-                ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
+            if (memberData.rank_card_bg_id >= 1) {
+                console.log(memberData.rank_card_bg_id)
+                const bg = this.client.config.backgrounds().find(bg => bg.id == memberData.rank_card_bg_id);
+                console.log(bg)
+                let img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
             } else {
 

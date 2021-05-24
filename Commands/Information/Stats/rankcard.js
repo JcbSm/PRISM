@@ -1,5 +1,6 @@
 const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
+const fs = require('fs')
 
 const commandInfo = commandOptions({
     id: 'rankcard',
@@ -33,7 +34,8 @@ class RankCardCommand extends Command {
         const defaultOptions = await this.client.config.presets.defaultOptions(message.guild);
 
         let options = [
-            ['COLOR', 'COLOUR', '1']
+            ['COLOR', 'COLOUR', '1'],
+            ['BACKGROUND', 'BG', '2']
         ];
 
         const option = yield {
@@ -62,6 +64,48 @@ class RankCardCommand extends Command {
                 value = value.toUpperCase();
 
                 break;
+            
+            case 'BACKGROUND':
+
+                options = [
+                    ['SET', '1'],
+                    ['REMOVE', 'RM', '2']
+                ]
+
+                optionTwo = yield {
+                    type: options,
+                    prompt: prompt(optionEmbed(options, defaultOptions))
+                    
+                };
+
+                switch (optionTwo) {
+
+                    case 'SET':
+
+                        const bgs = this.client.config.backgrounds();
+
+                        let embed = {
+                            title: 'SELECT NEW BACKGROUND',
+                            description: `${bgs.map(bg => `\`${bg.id}\` • ${bg.name.toUpperCase()}`).join('\n')}`
+                        };
+                        Object.assign(embed, defaultOptions);
+
+                        value = yield {
+                            type: (message, phrase) => {
+                                return bgs.find(bg => bg.id === phrase.toLowerCase() || bg.name === phrase.toLowerCase())
+                            },
+                            prompt: prompt(embed)
+                        }
+
+                        break;
+
+                    case 'REMOVE':
+
+                        break;
+
+                }
+
+                break;
         
             default:
                 break;
@@ -70,7 +114,7 @@ class RankCardCommand extends Command {
         return { option, optionTwo, value }
     };
 
-    async exec(message, { option, value }) {
+    async exec(message, { option, optionTwo, value }) {
 
         switch (option) {
 
@@ -91,7 +135,6 @@ class RankCardCommand extends Command {
                     value = null
                 } else {
 
-                    console.log(value)
                     let color = this.client.functions.resolveHex(value);
 
                     if(color) {
@@ -105,6 +148,26 @@ class RankCardCommand extends Command {
                 }
 
                 break;
+            
+            case 'BACKGROUND':
+
+                switch (optionTwo) {
+
+                    case 'SET':
+
+                        await this.client.db.query(`UPDATE members SET rank_card_bg_id = ${value.id} WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`);
+                        value = `\`${value.id}\` • ${value.name.toUpperCase()}`
+
+                        break;
+
+                    case 'REMOVE':
+
+                        await this.client.db.query(`UPDATE members SET rank_card_bg_id = 0 WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`);
+                        value = `\`null\``
+
+                        break; 
+
+                }
         };
 
         let embed = {

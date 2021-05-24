@@ -1,5 +1,4 @@
 const { Listener } = require('discord-akairo');
-const { last } = require('lodash');
 
 class CountingListener extends Listener {
     constructor() {

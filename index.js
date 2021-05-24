@@ -112,67 +112,85 @@ client.db = db;
 client.testing = testing;
 client.config = {
 
-        colors: {
-            main: async (guild) => {
-                const color = (await client.db.query(`SELECT main_color FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].main_color;
-                return color;
-            },
-            embed: async (guild) => {
-                try{
-                    return JSON.parse((await client.db.query(`SELECT config FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].config).messages.embeds.color
-                } catch {
-                    return (await client.db.query(`SELECT main_color FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].main_color;
-                }
-            },
-
-            green: '#5CB85C',
-            amber: '#F0AD4E',
-            red: '#D9454F',
-
-            discord: {
-                blue: '#7289DA',
-            },
-
-            purple: '#'
+    colors: {
+        main: async (guild) => {
+            const color = (await client.db.query(`SELECT main_color FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].main_color;
+            return color;
         },
-
-        presets: {
-            blankField: {
-                name: '\u200b',
-                value: '\u200b'
-            },
-            blankFieldInline: {
-                name: '\u200b',
-                value: '\u200b',
-                inline: true
-            },
-            defaultOptions: async (guild) =>  {
-                return {
-
-                    footer: {
-                        text: 'Type \'cancel\' to cancel.',
-                    },
-                    timestamp: Date.now(),
-                    color: await client.config.colors.embed(guild)
-                }
+        embed: async (guild) => {
+            try{
+                return JSON.parse((await client.db.query(`SELECT config FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].config).messages.embeds.color
+            } catch {
+                return (await client.db.query(`SELECT main_color FROM guilds WHERE guild_id = ${guild.id}`)).rows[0].main_color;
             }
         },
 
-        characters: {
-            a: '🇦', b: '🇧', c: '🇨', d: '🇩',
-            e: '🇪', f: '🇫', g: '🇬', h: '🇭',
-            i: '🇮', j: '🇯', k: '🇰', l: '🇱',
-            m: '🇲', n: '🇳', o: '🇴', p: '🇵',
-            q: '🇶', r: '🇷', s: '🇸', t: '🇹',
-            u: '🇺', v: '🇻', w: '🇼', x: '🇽',
-            y: '🇾', z: '🇿', 0: '0⃣', 1: '1⃣',
-            2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣',
-            6: '6⃣', 7: '7⃣', 8: '8⃣', 9: '9⃣',
-            10: '🔟', '#': '#⃣', '*': '*⃣',
-            '!': '❗', '?': '❓', '+': '➕',
-            '-': '➖', '$': '💲', '>': '▶️',
-            '<': '◀️', ' ': ' '
+        green: '#5CB85C',
+        amber: '#F0AD4E',
+        red: '#D9454F',
+
+        discord: {
+            blue: '#7289DA',
         },
+
+        purple: '#'
+    },
+
+    presets: {
+        blankField: {
+            name: '\u200b',
+            value: '\u200b'
+        },
+        blankFieldInline: {
+            name: '\u200b',
+            value: '\u200b',
+            inline: true
+        },
+        defaultOptions: async (guild) =>  {
+            return {
+
+                footer: {
+                    text: 'Type \'cancel\' to cancel.',
+                },
+                timestamp: Date.now(),
+                color: await client.config.colors.embed(guild)
+            }
+        }
+    },
+
+    characters: {
+        a: '🇦', b: '🇧', c: '🇨', d: '🇩',
+        e: '🇪', f: '🇫', g: '🇬', h: '🇭',
+        i: '🇮', j: '🇯', k: '🇰', l: '🇱',
+        m: '🇲', n: '🇳', o: '🇴', p: '🇵',
+        q: '🇶', r: '🇷', s: '🇸', t: '🇹',
+        u: '🇺', v: '🇻', w: '🇼', x: '🇽',
+        y: '🇾', z: '🇿', 0: '0⃣', 1: '1⃣',
+        2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣',
+        6: '6⃣', 7: '7⃣', 8: '8⃣', 9: '9⃣',
+        10: '🔟', '#': '#⃣', '*': '*⃣',
+        '!': '❗', '?': '❓', '+': '➕',
+        '-': '➖', '$': '💲', '>': '▶️',
+        '<': '◀️', ' ': ' '
+    },
+
+    backgrounds: function backgrounds() {
+        const fs = require('fs');
+
+        const dir = fs.readdirSync('./Assets/Backgrounds');
+
+        let BGs = [];
+
+        dir.forEach(f => {
+            BGs.push({
+                id: f.split('_')[0],
+                name: f.split('_')[1].split('.')[0],
+                file: f
+            })
+        });
+
+        return BGs;
+    }
 }
 
 client.functions = {

@@ -1,7 +1,7 @@
 const { Command } = require('discord-akairo');
 const { GuildChannel } = require('discord.js');
 const { commandOptions } = require('../../index');
-const _ = require('lodash')
+//const _ = require('lodash')
 
 class UpdateConfigCommand extends Command {
     constructor() {
@@ -35,4 +35,4 @@ class UpdateConfigCommand extends Command {
     };
 };
 
-module.exports = UpdateConfigCommand;
+//module.exports = UpdateConfigCommand;

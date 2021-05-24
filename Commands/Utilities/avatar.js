@@ -40,7 +40,7 @@ class AvatarCommand extends Command {
             },
             timestamp: Date.now(),
             image: {
-                url: user.displayAvatarURL({ size: 4096 })
+                url: user.displayAvatarURL({ size: 4096, format: 'png' })
             },
             color: await this.client.config.colors.embed(message.guild),
         }})

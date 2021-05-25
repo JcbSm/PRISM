@@ -29,6 +29,8 @@ class RankCardCommand extends Command {
     };
 
     async *args(message) {
+        
+        let client = this.client;
 
         const { prompt, optionEmbed } = this.client.functions;
         const defaultOptions = await this.client.config.presets.defaultOptions(message.guild);
@@ -97,10 +99,47 @@ class RankCardCommand extends Command {
                             type: (message, phrase) => {
                                 return bgs.find(bg => bg.id === phrase.toLowerCase() || bg.name === phrase.toLowerCase())
                             },
-                            prompt: prompt(embed, undefined, undefined, [{
-                                attachment: (await this.client.config.previewBackgrounds()).url,
-                                name: 'backgrounds.png'
-                            }])
+                            prompt: {
+
+                                start: async () => {
+                                    return { embed: embed, files: [{
+                                        attachment: (await client.config.previewBackgrounds()).url,
+                                        name: 'backgrounds.png'
+                                    }] };
+                                },
+                                retry: async () => {
+                                    return { embed: embed, files: [{
+                                        attachment: (await client.config.previewBackgrounds()).url,
+                                        name: 'backgrounds.png'
+                                    }]};
+                                },
+                                cancel: () => {
+                                    return { embed: {
+                                        title: 'COMMAND CANCELLED',
+                                        description: '`Cancelled by User.`',
+                                        timestamp: Date.now(),
+                                        color: client.config.colors.red
+                                    }};
+                                },
+                                ended: () => {
+                                    return { embed: {
+                                        title: 'COMMAND CANCELLED',
+                                        description: 'Invalid Input.\n`Retry limit exceeded.`',
+                                        timestamp: Date.now(),
+                                        color: client.config.colors.red
+                                    }};
+                                },
+                                timeout: () => {
+                                    return { embed: {
+                                        title: 'COMMAND CANCELLED',
+                                        description: `Timed Out.\n\`[${client.functions.UCT()}]\``,
+                                        timestamp: Date.now(),
+                                        color: client.config.colors.red
+                                    }};
+                                },
+                                retries: 5,
+                                time: 60*1000,
+                            }
                         }
 
                         break;
@@ -121,6 +160,10 @@ class RankCardCommand extends Command {
     };
 
     async exec(message, { option, optionTwo, value }) {
+
+        let embed = {
+            color: await this.client.config.colors.embed(message.guild)
+        };
 
         switch (option) {
 
@@ -153,6 +196,8 @@ class RankCardCommand extends Command {
                     }
                 }
 
+                value ? embed.color = this.client.functions.resolveHex(value) === '#FFFFFF' ? '#FCFCFC' : this.client.functions.resolveHex(value) : null
+
                 break;
             
             case 'BACKGROUND':
@@ -176,12 +221,8 @@ class RankCardCommand extends Command {
                 }
         };
 
-        let embed = {
-            description: `Set **${option.toUpperCase()}** to **${value}**`,
-            color: await this.client.config.colors.embed(message.guild)
-        };
-
-        if(option === 'COLOR') value ? embed.color = this.client.functions.resolveHex(value) === '#FFFFFF' ? '#FCFCFC' : this.client.functions.resolveHex(value) : null
+        
+        embed.description =  `Set **${option.toUpperCase()}** to **${value}**`;
 
         message.channel.send({ embed: embed });
         

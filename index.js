@@ -424,14 +424,14 @@ client.functions = {
             return embed;
         },
 
-        prompt: function prompt(embed, retries = 5, time = 60*1000, files = {}) {
+        prompt: function prompt(embed, retries = 5, time = 60*1000) {
 
             return {
                 start: () => {
-                    return { embed: embed, files: files };
+                    return { embed: embed };
                 },
                 retry: () => {
-                    return { embed: embed, files: files };
+                    return { embed: embed };
                 },
                 cancel: () => {
                     return { embed: {

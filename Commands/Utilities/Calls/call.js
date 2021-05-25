@@ -113,7 +113,7 @@ class CallCommand extends Command {
                 }
 
                 await textChannel.send({ embed: {
-                    title: 'CALL COMMANDS',
+                    title: `${this.category.id.toUpperCase()} COMMANDS`,
                     description: `Here is a list of the available commands.\nType \`${await this.handler.prefix(message)}help [command]\` for more information`,
                     fields: fields,
                     color: await this.client.config.colors.embed(message.guild),

@@ -62,7 +62,7 @@ class HelpCommand extends Command {
                 color: await this.client.config.colors.embed(message.guild),
                 timestamp: Date.now(),
                 footer: {
-                    text: `Type '${prefix}help (command)' for more information.`
+                    text: `Type '${prefix}help [command/category]' for more information.`
                 }
             }})
         }

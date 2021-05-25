@@ -190,6 +190,41 @@ client.config = {
         });
 
         return BGs;
+    },
+
+    previewBackgrounds: async function previewBackgrounds() {
+
+        const { createCanvas, loadImage, registerFont } = require('canvas');
+
+        const bgs = client.config.backgrounds();
+
+        const canvas = createCanvas(2176, 64 + Math.ceil(bgs.length/3)*(192+150));
+        const ctx = canvas.getContext('2d'); registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'});
+        ctx.fillStyle = '#36393E'; ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        let [bg, img, text, xPos, yPos] = [];
+        for (let i = 0; i < bgs.length; i++) {
+
+            bg = bgs[i];
+
+            xPos = 64 + (i % 3) * (640 + 64);
+            yPos = 64 + Math.floor(i/3) * (192 + 150);
+            text = `${bg.id}. ${bg.name.toUpperCase()}`
+
+            img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
+            ctx.drawImage(img, xPos, yPos, 640, 192);
+
+            ctx.font = 'bold 64px "bahnschrift"';
+            ctx.textAlign = "center";
+            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#242424'; ctx.lineWidth = 12
+            ctx.strokeText(text, xPos+320, yPos+192+64); ctx.fillText(text, xPos+320, yPos+192+64);
+
+        }
+
+        return {
+            url: canvas.toBuffer()
+        }
+
     }
 }
 
@@ -389,14 +424,14 @@ client.functions = {
             return embed;
         },
 
-        prompt: function prompt(embed, retries = 5, time = 60*1000) {
+        prompt: function prompt(embed, retries = 5, time = 60*1000, files = {}) {
 
             return {
                 start: () => {
-                    return { embed: embed };
+                    return { embed: embed, files: files };
                 },
                 retry: () => {
-                    return { embed: embed };
+                    return { embed: embed, files: files };
                 },
                 cancel: () => {
                     return { embed: {

@@ -86,7 +86,10 @@ class RankCardCommand extends Command {
 
                         let embed = {
                             title: 'SELECT NEW BACKGROUND',
-                            description: `${bgs.map(bg => `\`${bg.id}\` • ${bg.name.toUpperCase()}`).join('\n')}`
+                            description: `Type the name or ID of a background to select it.`,
+                            image: {
+                                url: 'attachment://backgrounds.png'
+                            }
                         };
                         Object.assign(embed, defaultOptions);
 
@@ -94,7 +97,10 @@ class RankCardCommand extends Command {
                             type: (message, phrase) => {
                                 return bgs.find(bg => bg.id === phrase.toLowerCase() || bg.name === phrase.toLowerCase())
                             },
-                            prompt: prompt(embed)
+                            prompt: prompt(embed, undefined, undefined, [{
+                                attachment: (await this.client.config.previewBackgrounds()).url,
+                                name: 'backgrounds.png'
+                            }])
                         }
 
                         break;

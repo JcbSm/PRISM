@@ -1,5 +1,7 @@
 const { Command } = require('discord-akairo');
 const { loadImage, createCanvas, registerFont } = require('canvas');
+const { canvasRGBA } = require('stackblur-canvas')
+const Color = require('color')
 const Discord = require('discord.js')
 const { commandOptions } = require('../../../index');
 
@@ -44,7 +46,7 @@ class RankCommand extends Command {
 
             //Colours
             const colors = {
-                bg: '#242424',
+                bg: '#141414',
                 highlight: '#ffffff',
                 highlightDark: '#ababab',
                 border: '#1c1c1c',
@@ -78,15 +80,27 @@ class RankCommand extends Command {
             ctx.save()
             
             if (this.client.config.backgrounds().map(b => Number(b.id)).includes(memberData.rank_card_bg_id)) {
+
                 const bg = this.client.config.backgrounds().find(bg => bg.id == memberData.rank_card_bg_id);
                 let img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+
 
             } else {
 
                 //Fill BG
                 ctx.fillStyle = colors.bg
                 ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+                ctx.drawImage(avatar, 180, -128, 512, 512)
+                //Transparent bg colour
+                colors.bga = Color(colors.bg).fade(1);
+                let grd = ctx.createLinearGradient(180, 0, canvas.width+500, 0); grd.addColorStop(0, colors.bg); grd.addColorStop(1, colors.bga.rgb().string());
+
+                ctx.fillStyle = grd; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                canvasRGBA(canvas, 0, 0, canvas.width, canvas.height, 15)
 
             }
             

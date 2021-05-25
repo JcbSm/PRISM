@@ -161,7 +161,7 @@ class RankCardCommand extends Command {
 
     async exec(message, { option, optionTwo, value }) {
 
-        let embed = {
+        let files = []; let embed = {
             color: await this.client.config.colors.embed(message.guild)
         };
 
@@ -205,10 +205,11 @@ class RankCardCommand extends Command {
                 switch (optionTwo) {
 
                     case 'SET':
-
+                        
                         await this.client.db.query(`UPDATE members SET rank_card_bg_id = ${value.id} WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`);
+                        embed.image = { url: 'attachment://bg.png'}
+                        files.push({ name: 'bg.png', attachment: `./Assets/Backgrounds/${value.file}`});
                         value = `\`${value.id}\` • ${value.name.toUpperCase()}`
-
                         break;
 
                     case 'REMOVE':
@@ -224,7 +225,7 @@ class RankCardCommand extends Command {
         
         embed.description =  `Set **${option.toUpperCase()}** to **${value}**`;
 
-        message.channel.send({ embed: embed });
+        message.channel.send({ embed: embed, files: files });
         
     };
 };

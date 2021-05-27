@@ -34,7 +34,7 @@ class SayCommand extends Command {
         };
 
         const channel = yield {
-            type: 'channel',
+            type: 'textChannel',
             default: message => message.channel
         };
 
@@ -43,10 +43,6 @@ class SayCommand extends Command {
     };
 
     async exec(message, args) {
-
-        if(args.channel.type !== 'text') {
-            return message.reply('Channel is not a text channel');
-        }
 
         if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES')) {
             

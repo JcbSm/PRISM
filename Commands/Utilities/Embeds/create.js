@@ -7,11 +7,23 @@ const commandInfo = commandOptions({
     channel: 'guild',
     typing: false,
     description: {
-        usage: ['[channel] (options)'],
-        content: 'Creates a custom embed'
+        usage: ['[channel] [options]'],
+        content: 'Creates a custom embed\n\nOptions should be split as:\n`option: value; option2: value;`',
+        argumentOptions: [
+            {
+                id: 'OPTIONS',
+                options: [
+                    ['TITLE'],
+                    ['DESCRIPTION'],
+                    ['COLOR'],
+                    ['THUMBNAIL'],
+                    ['IMAGE']
+                ]
+            }
+        ]
     },
     clientPermissions: ['EMBED_LINKS'],
-    userPermissions: ['SEND_MESSAGES']
+    userPermissions: ['SEND_MESSAGES', 'EMBED_LINKS']
 }, __dirname);
 
 class EmbedCreateCommand extends Command {
@@ -27,7 +39,8 @@ class EmbedCreateCommand extends Command {
         }
 
         let options = yield {
-            match: 'rest'
+            match: 'rest',
+            prompt: this.client.functions.helpPrompt(message, this)
         }
 
         let [arr, embed] = [options.split(';'), {}];
@@ -64,9 +77,21 @@ class EmbedCreateCommand extends Command {
 
     async exec(message, args) {
 
-        await args.channel.send({embed: args.embed})
-        return message.react('👌')
+        if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES')) {
+            
+            try {
+                await args.channel.send({embed: args.embed})
+                return message.react('👌')
+            } catch {
+                return message.channel.send({ embed: {
+                    description: '`ERROR: Invalid embed options`',
+                    color: this.client.config.colors.red
+                }});
+            }
 
+        } else {
+            this.handler.emit('missingPermissions', message, this, 'user', ['SEND_MESSAGES'])
+        };
     };
 };
 

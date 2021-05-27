@@ -412,7 +412,7 @@ client.functions = {
         },
 
         optionEmbed: function optionEmbed(options, defaultOptions) {
-
+            console.log(options)
             embed = {
                 title: 'CHOOSE AN OPTION',
                 description: options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n"),

@@ -34,6 +34,7 @@ const { Client } = require('pg');
 const { loadImage, createCanvas, registerFont } = require('canvas');
 const { canvasRGBA } = require('stackblur-canvas')
 const Color = require('color')
+const fs = require('fs');
 
 let [credentials, testing] = [];
 try{
@@ -152,9 +153,9 @@ class BotClient extends AkairoClient {
 
             ctx.save()
             
-            if (this.config.backgrounds().map(b => Number(b.id)).includes(memberData.rank_card_bg_id)) {
+            if (this.backgrounds.map(b => Number(b.id)).includes(memberData.rank_card_bg_id)) {
 
-                const bg = this.config.backgrounds().find(bg => bg.id == memberData.rank_card_bg_id);
+                const bg = this.backgrounds.find(bg => bg.id == memberData.rank_card_bg_id);
                 let img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
@@ -304,7 +305,62 @@ class BotClient extends AkairoClient {
         }
 
     };
-    
+
+    get backgrounds() {
+
+        const dir = fs.readdirSync('./Assets/Backgrounds');
+
+        let BGs = [];
+
+        dir.forEach(f => {
+            BGs.push({
+                id: f.split('_')[0],
+                name: f.split('_')[1].split('.')[0],
+                file: f
+            })
+        });
+
+        return BGs;
+
+    };
+
+    async _backgroundsImage() {
+
+        const bgs = this.backgrounds;
+
+        const canvas = createCanvas(2176, 64 + Math.ceil(bgs.length/3)*(192+150));
+        const ctx = canvas.getContext('2d'); registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'});
+        ctx.fillStyle = '#36393E'; ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        let [bg, img, text, xPos, yPos] = [];
+        for (let i = 0; i < bgs.length; i++) {
+
+            bg = bgs[i];
+
+            xPos = 64 + (i % 3) * (640 + 64);
+            yPos = 64 + Math.floor(i/3) * (192 + 150);
+            text = `${bg.id}. ${bg.name.toUpperCase()}`
+
+            img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
+            ctx.drawImage(img, xPos, yPos, 640, 192);
+
+            ctx.font = 'bold 64px "bahnschrift"';
+            ctx.textAlign = "center";
+            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#242424'; ctx.lineWidth = 12
+            ctx.strokeText(text, xPos+320, yPos+192+64); ctx.fillText(text, xPos+320, yPos+192+64);
+
+        }
+
+        return {
+            url: canvas.toBuffer()
+        }
+
+    };
+
+    get backgroundsImage() {
+        return this._backgroundsImage()
+    };
+
 };
 
 const client = new BotClient();
@@ -372,58 +428,6 @@ client.config = {
         '<': '◀️', ' ': ' '
     },
 
-    backgrounds: function backgrounds() {
-        const fs = require('fs');
-
-        const dir = fs.readdirSync('./Assets/Backgrounds');
-
-        let BGs = [];
-
-        dir.forEach(f => {
-            BGs.push({
-                id: f.split('_')[0],
-                name: f.split('_')[1].split('.')[0],
-                file: f
-            })
-        });
-
-        return BGs;
-    },
-
-    previewBackgrounds: async function previewBackgrounds() {
-
-        const { createCanvas, loadImage, registerFont } = require('canvas');
-
-        const bgs = client.config.backgrounds();
-
-        const canvas = createCanvas(2176, 64 + Math.ceil(bgs.length/3)*(192+150));
-        const ctx = canvas.getContext('2d'); registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'});
-        ctx.fillStyle = '#36393E'; ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-        let [bg, img, text, xPos, yPos] = [];
-        for (let i = 0; i < bgs.length; i++) {
-
-            bg = bgs[i];
-
-            xPos = 64 + (i % 3) * (640 + 64);
-            yPos = 64 + Math.floor(i/3) * (192 + 150);
-            text = `${bg.id}. ${bg.name.toUpperCase()}`
-
-            img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
-            ctx.drawImage(img, xPos, yPos, 640, 192);
-
-            ctx.font = 'bold 64px "bahnschrift"';
-            ctx.textAlign = "center";
-            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#242424'; ctx.lineWidth = 12
-            ctx.strokeText(text, xPos+320, yPos+192+64); ctx.fillText(text, xPos+320, yPos+192+64);
-
-        }
-
-        return {
-            url: canvas.toBuffer()
-        }
-
-    }
 }
 
 client.functions = {
@@ -611,7 +615,7 @@ client.functions = {
         },
 
         optionEmbed: function optionEmbed(options, defaultOptions) {
-            console.log(options)
+            
             embed = {
                 title: 'CHOOSE AN OPTION',
                 description: options.map(e => `\`${options.indexOf(e)+1}\` • \`${e[0]}\``).join("\n"),

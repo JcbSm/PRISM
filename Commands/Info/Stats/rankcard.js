@@ -1,6 +1,5 @@
 const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
-const fs = require('fs')
 
 const commandInfo = commandOptions({
     id: 'rankcard',
@@ -84,7 +83,7 @@ class RankCardCommand extends Command {
 
                     case 'SET':
 
-                        const bgs = this.client.config.backgrounds();
+                        const bgs = this.client.backgrounds;
 
                         let embed = {
                             title: 'SELECT NEW BACKGROUND',
@@ -103,13 +102,13 @@ class RankCardCommand extends Command {
 
                                 start: async () => {
                                     return { embed: embed, files: [{
-                                        attachment: (await client.config.previewBackgrounds()).url,
+                                        attachment: (await client.backgroundsImage).url,
                                         name: 'backgrounds.png'
                                     }] };
                                 },
                                 retry: async () => {
                                     return { embed: embed, files: [{
-                                        attachment: (await client.config.previewBackgrounds()).url,
+                                        attachment: (await client.backgroundsImage).url,
                                         name: 'backgrounds.png'
                                     }]};
                                 },

@@ -103,13 +103,12 @@ class BotClient extends AkairoClient {
         this.listenerHandler.loadAll();
         this.inhibitorHandler.loadAll();
         console.log('Modules lodaded');
+
+        this.db = db; this.testing = testing;
     };
 };
 
 const client = new BotClient();
-
-client.db = db;
-client.testing = testing;
 client.config = {
 
     colors: {

@@ -39,9 +39,9 @@ class XpCommand extends Command {
         const [ max, min, current ] = [ xpCalc(level+1), xpCalc(level), xp-xpCalc(level) ];
         const timeSince = new Date(message.createdTimestamp - xp_last_message_timestamp);
         
-        return message.channel.send({ embed: {
-            title: `LEVEL [${level}]`,
-            description: `\`\`\`${groupDigits(current)} / ${groupDigits(max-min)}\`\`\``,
+        return message.channel.send({ files: [{ attachment: await this.client.getRankCard(args.member), name: 'rank.png' }], embed: {
+            title: `EXPERIENCE`,
+            //description: `\`\`\`${groupDigits(current)} / ${groupDigits(max-min)}\`\`\``,
             fields: [
                 {
                     name: 'TOTAL XP',
@@ -66,10 +66,11 @@ class XpCommand extends Command {
                 },
                 this.client.config.presets.blankFieldInline
             ],
-            thumbnail: {
-                url: args.member.user.displayAvatarURL()
-            },
+            // thumbnail: {
+            //     url: args.member.user.displayAvatarURL()
+            // },
             timestamp: Number(xp_last_message_timestamp),
+            image: { url: 'attachment://rank.png' },
             footer: {
                 text: timeSince.getUTCHours() === 0 ? `${this.client.functions.pad(timeSince.getUTCMinutes(), 2)}:${this.client.functions.pad(timeSince.getUTCSeconds(), 2)}` : null
             }, 

@@ -31,6 +31,9 @@ module.exports = {
 
 const { AkairoClient, CommandHandler, ListenerHandler, InhibitorHandler } = require('discord-akairo');
 const { Client } = require('pg');
+const { loadImage, createCanvas, registerFont } = require('canvas');
+const { canvasRGBA } = require('stackblur-canvas')
+const Color = require('color')
 
 let [credentials, testing] = [];
 try{
@@ -106,6 +109,202 @@ class BotClient extends AkairoClient {
 
         this.db = db; this.testing = testing;
     };
+
+    async getRankCard (member) {
+
+        try{
+
+            const members = (await this.db.query(`SELECT * FROM members WHERE guild_id = ${member.guild.id}`)).rows
+            const memberData = members.find(u => u.user_id === member.id)
+
+            //Colours
+            const colors = {
+                bg: '#141414',
+                highlight: '#ffffff',
+                highlightDark: '#ababab',
+                border: '#1c1c1c',
+                main: memberData.rank_card_color ? memberData.rank_card_color : await this.config.colors.embed(member.guild)
+            }
+
+            registerFont('./Assets/Fonts/bahnschrift-main.ttf', {family: 'bahnschrift'})
+
+            const canvas = createCanvas(640, 192)
+            const ctx = canvas.getContext('2d')
+
+            let rank = members.sort((a, b) => b.xp - a.xp).findIndex(u => u.user_id === member.id)+1;
+
+            const avatar = await loadImage(member.user.displayAvatarURL({size: 128, format: 'png'}));
+            let statusColor;
+            switch(member.user.presence.status) {
+                case 'online':
+                    statusColor = '#5cb85c'
+                    break;
+                case 'idle':
+                    statusColor = '#f0ad4e'
+                    break;
+                case 'dnd':
+                    statusColor = '#d9454f'
+                    break;
+                case 'offline':
+                    statusColor = '#545454'
+                    break;
+            }
+
+            ctx.save()
+            
+            if (this.config.backgrounds().map(b => Number(b.id)).includes(memberData.rank_card_bg_id)) {
+
+                const bg = this.config.backgrounds().find(bg => bg.id == memberData.rank_card_bg_id);
+                let img = await loadImage(`./Assets/Backgrounds/${bg.file}`);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+
+
+            } else {
+
+                //Fill BG
+                ctx.fillStyle = colors.bg
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+                ctx.drawImage(avatar, 180, -128, 512, 512)
+                //Transparent bg colour
+                colors.bga = Color(colors.bg).fade(1);
+                let grd = ctx.createLinearGradient(180, 0, canvas.width+500, 0); grd.addColorStop(0, colors.bg); grd.addColorStop(1, colors.bga.rgb().string());
+
+                ctx.fillStyle = grd; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                canvasRGBA(canvas, 0, 0, canvas.width, canvas.height, 15)
+
+            }
+            
+            //Outline
+            ctx.lineWidth = 10
+            ctx.strokeStyle = colors.border
+            ctx.strokeRect(0, 0, canvas.width, canvas.height)
+
+            //Draw Avatar
+            ctx.beginPath();
+            ctx.arc(96, 96, 64, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(avatar, 32, 32, 128, 128)
+
+            ctx.restore()
+
+            //Outline Avatar
+            ctx.beginPath();
+            ctx.arc(96, 96, 70, 0, Math.PI * 2, true);
+            ctx.strokeStyle = colors.bg
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            ctx.strokeStyle = colors.highlight
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            //Status
+            ctx.beginPath();
+            ctx.arc(144, 144, 18, 0, Math.PI * 2, true);
+            ctx.fillStyle = statusColor;
+            ctx.fill();
+            ctx.strokeStyle = colors.bg
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            //Calc Level
+            const level = this.functions.levelCalc(memberData.xp)
+            
+            //Bar constants
+            const [barX, barY, barRad, barLen] = [192, 128, 16, 400]
+            const minXP = this.functions.xpCalc(level);
+            const maxXP = this.functions.xpCalc(level+1);
+            const currentXP = memberData.xp-minXP;
+            const progress = (memberData.xp - minXP)/(maxXP - minXP)
+
+            //Outline Bar
+            ctx.beginPath();
+            ctx.arc(barX, barY, (barRad+2), -Math.PI/2, Math.PI/2, true);
+            ctx.lineTo(barX+barLen, barY+(barRad+2));
+            ctx.arc(barX+barLen, barY, (barRad+2), Math.PI/2, -Math.PI/2, true);
+            ctx.lineTo(barX, barY-(barRad+2));
+            ctx.strokeStyle = colors.bg
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            ctx.strokeStyle = colors.highlight;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            //Fill Bar
+            let newBarLen = barLen * progress
+            ctx.beginPath();
+            ctx.arc(barX, barY, (barRad-2), -Math.PI/2, Math.PI/2, true);
+            ctx.lineTo(barX+newBarLen, barY+(barRad-2));
+            ctx.arc(barX+newBarLen, barY, (barRad-2), Math.PI/2, -Math.PI/2, true);
+            ctx.lineTo(barX, barY-(barRad-2));
+
+            ctx.strokeStyle = colors.bg
+            ctx.lineWidth = 5
+            ctx.stroke();
+            ctx.fillStyle = colors.main;
+            ctx.fill();
+
+            //Text
+            const applyText = (canvas, text, size) => {
+                const ctx = canvas.getContext('2d');
+                let fontSize = size;
+                do {
+                    ctx.font = `${fontSize -= 5}px "bahnschrift"`;
+                } while (ctx.measureText(text).width > barLen);
+                return ctx.font;
+            };
+
+            //Name
+            ctx.strokeStyle = colors.bg
+            ctx.lineWidth = 5
+
+            ctx.font = applyText(canvas, member.user.tag, 32);
+            ctx.fillStyle = colors.highlight;
+            ctx.strokeText(member.user.tag, barX, barY-barRad-10)
+            ctx.fillText(member.user.tag, barX, barY-barRad-10)
+
+            //Progress
+            const progStr = `${this.functions.groupDigits(currentXP)} / ${this.functions.groupDigits(maxXP - minXP)} xp`
+            ctx.font = applyText(canvas, progStr, 26);
+            ctx.strokeText(progStr, barX, barY+barRad+28)
+            ctx.fillStyle = colors.highlightDark;
+            ctx.fillText(progStr, barX, barY+barRad+28)
+            
+            //Level
+            ctx.fillStyle = colors.main
+            ctx.font = '48px "bahnschrift"';
+            let numWidth = ctx.measureText(`${level}`).width;
+            ctx.strokeText(`${level}`, 608-numWidth, 52)
+            ctx.fillText(`${level}`, 608-numWidth, 52)
+            ctx.font = '32px "bahnschrift"';
+            let textWidth = ctx.measureText(`Level `).width;
+            ctx.strokeText(`Level `, 608-textWidth-numWidth, 52)
+            ctx.fillText(`Level `, 608-textWidth-numWidth, 52)
+
+            const levelWidth = numWidth+textWidth;
+
+            //Rank
+            ctx.fillStyle = colors.highlightDark
+            ctx.font = '48px "bahnschrift"';
+            numWidth = ctx.measureText(`#${rank}`).width;
+            ctx.strokeText(`#${rank}`, 592-numWidth-levelWidth, 52)
+            ctx.fillText(`#${rank}`, 592-numWidth-levelWidth, 52)
+            ctx.font = '32px "bahnschrift"';
+            textWidth = ctx.measureText(`Rank `).width;
+            ctx.strokeText(`Rank `, 592-textWidth-numWidth-levelWidth, 52)
+            ctx.fillText(`Rank `, 592-textWidth-numWidth-levelWidth, 52)
+
+            return canvas.toBuffer()
+
+        } catch(e) {
+            console.log(e)
+        }
+
+    };
+    
 };
 
 const client = new BotClient();

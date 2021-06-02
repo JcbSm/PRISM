@@ -13,7 +13,7 @@ module.exports = {
             clientPermissions: obj.clientPermissions,
             userPermissions: obj.userPermissions,
             category: dir.split(/(\\|\/)/).pop()
-        }
+        };
 
         options.aliases.unshift(obj.id)
 
@@ -53,7 +53,7 @@ const db = new Client({
 });
 
 (async function() {
-    console.log('Connecting to DB');
+    console.log('Connecting to DB...');
     try{
         await db.connect();
         console.log('Connection established');

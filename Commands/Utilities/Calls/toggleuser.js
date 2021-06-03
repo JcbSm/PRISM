@@ -6,7 +6,7 @@ const commandInfo = commandOptions({
     aliases: ['tuser', 'tusers', 'toggleusers'],
     description: {
         usage: ['[user]', '[user1]; [user2]; [user3];...'],
-        content: 'Toggle weather or not users can see the voice chanel'
+        content: 'Toggle whether or not users can see the voice chanel'
     },
     channel: 'guild',
     typing: true,

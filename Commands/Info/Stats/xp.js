@@ -40,7 +40,6 @@ class XpCommand extends Command {
         const timeSince = new Date(message.createdTimestamp - xp_last_message_timestamp);
         
         return message.channel.send({ files: [{ attachment: await this.client.getRankCard(args.member), name: 'rank.png' }], embed: {
-            title: `EXPERIENCE`, // `LEVEL [${level}]`,
             //description: `\`\`\`${groupDigits(current)} / ${groupDigits(max-min)}\`\`\``,
             fields: [
                 {

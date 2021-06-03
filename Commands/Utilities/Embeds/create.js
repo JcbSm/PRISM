@@ -77,7 +77,7 @@ class EmbedCreateCommand extends Command {
 
     async exec(message, args) {
 
-        if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES')) {
+        if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES') && args.channel.permissionsFor(message.author.id).has('VIEW_CHANNEL')) {
             
             try {
                 await args.channel.send({embed: args.embed})
@@ -90,7 +90,7 @@ class EmbedCreateCommand extends Command {
             }
 
         } else {
-            this.handler.emit('missingPermissions', message, this, 'user', ['SEND_MESSAGES'])
+            args.channel.permissionsFor(message.author.id).has('VIEW_CHANNEL') ? this.handler.emit('missingPermissions', message, this, 'user', ['SEND_MESSAGES']) : this.handler.emit('missingPermissions', message, this, 'user', ['VIEW_CHANNEL']);
         };
     };
 };

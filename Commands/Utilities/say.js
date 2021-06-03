@@ -44,12 +44,13 @@ class SayCommand extends Command {
 
     async exec(message, args) {
 
-        if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES')) {
+        if(args.channel.permissionsFor(message.author.id).has('SEND_MESSAGES') && args.channel.permissionsFor(message.author.id).has('VIEW_CHANNEL')) {
             
             await args.channel.id === message.channel.id ? message.delete() : message.react('👌')
             return args.channel.send(args.text);
+
         } else {
-            this.handler.emit('missingPermissions', message, this, 'user', ['SEND_MESSAGES'])
+            args.channel.permissionsFor(message.author.id).has('VIEW_CHANNEL') ? this.handler.emit('missingPermissions', message, this, 'user', ['SEND_MESSAGES']) : this.handler.emit('missingPermissions', message, this, 'user', ['VIEW_CHANNEL'])
         }
     };
 };

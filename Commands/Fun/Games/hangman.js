@@ -31,7 +31,7 @@ class HangmanCommand extends Command {
             fs.readFile('./Commands/Fun/Games/words.txt', (err, data) => {
                 if (err) throw err;
 
-                console.log(data.toString().split())
+                console.log(data.toString().replace(/\r/gi, '').split('\n'))
             });
             return words
         };

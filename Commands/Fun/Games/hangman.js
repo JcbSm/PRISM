@@ -26,17 +26,11 @@ class HangmanCommand extends Command {
 
     async exec(message, args) {
 
-        async function genWord() {
-            let words;
-            fs.readFile('./Commands/Fun/Games/words.txt', (err, data) => {
-                if (err) throw err;
-
-                console.log(data.toString().replace(/\r/gi, '').split('\n'))
-            });
-            return words
+        function genWord() {
+            let data = fs.readFileSync('./Commands/Fun/Games/words.txt', {encoding: 'utf8'});
+            let words = data.replace(/\r/gi, '').split('\n')
+            return words[Math.floor(Math.random()*words.length)]
         };
-
-        genWord();
     };
 };
 

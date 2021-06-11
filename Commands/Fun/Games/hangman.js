@@ -1,5 +1,6 @@
 const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
+const { createCanvas } = require('canvas');
 const fs = require('fs')
 
 const commandInfo = commandOptions({
@@ -70,12 +71,63 @@ class HangmanCommand extends Command {
             }).join(' ')
         };
 
+        async function hangmanImage(lives) {
+
+            let lineWidth = 4;
+
+            const canvas = createCanvas(400, 200);
+            const ctx = canvas.getContext('2d');
+
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = lineWidth;
+
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - lineWidth/2);
+            ctx.lineTo(canvas.width/2, canvas.height - lineWidth/2);
+
+            switch (lives) {
+                case 0:
+                    ctx.moveTo(canvas.width/3, 3*canvas.height/5);
+                    ctx.lineTo(canvas.width/3 + canvas.width/20, 7*canvas.height/8);
+                case 1:
+                    ctx.moveTo(canvas.width/3, 3*canvas.height/5);
+                    ctx.lineTo(canvas.width/3 - canvas.width/20, 7*canvas.height/8);
+                case 2:
+                    ctx.moveTo(canvas.width/3, 9*canvas.height/25);
+                    ctx.lineTo(canvas.width/3 + canvas.width/20, canvas.height/2)
+                case 3:
+                    ctx.moveTo(canvas.width/3, 9*canvas.height/25);
+                    ctx.lineTo(canvas.width/3 - canvas.width/20, canvas.height/2)
+                case 4:
+                    ctx.moveTo(canvas.width/3, canvas.height/8 + 2*canvas.height/12);
+                    ctx.lineTo(canvas.width/3, 3*canvas.height/5);
+                case 5:
+                    ctx.moveTo(canvas.width/3, canvas.height/8)
+                    ctx.arc(canvas.width/3, canvas.height/8 + canvas.height/12, canvas.height/12, -Math.PI/2, 3*Math.PI/2);
+                case 6:
+                    ctx.moveTo(canvas.width/3, 0);
+                    ctx.lineTo(canvas.width/3, canvas.height/8)
+                case 7:
+                    ctx.moveTo(canvas.width/15, canvas.height/5);
+                    ctx.lineTo(canvas.width/15 + canvas.height/5, lineWidth/2);
+                case 8:
+                    ctx.moveTo(canvas.width/15, lineWidth/2);
+                    ctx.lineTo(canvas.width/2.5, lineWidth/2);
+                case 9:
+                    ctx.moveTo(canvas.width/15, canvas.height);
+                    ctx.lineTo(canvas.width/15, 0);
+            }
+
+            ctx.stroke();
+
+            return canvas.toBuffer()
+        };
+
         let word;
 
         if (multiplayer) {
             try {
                 await message.author.send(`Send the hangman word here.`);
-                word = parseWord((await message.author.dmChannel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 30*1000 })).first().content);
+                word = parseWord((await message.author.dmChannel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 30*1000 })).first().content.toUpperCase());
                 await message.author.send('Starting...')
             } catch {
                 word = parseWord(randWord());
@@ -86,12 +138,12 @@ class HangmanCommand extends Command {
 
         if (!word) return message.reply({ embed: { description: '`ERROR: Word missing`'}})
 
-        let lives = 11; let incorrect = []; let guessed = []; let alert = ''; let guess;
+        let lives = 4; let incorrect = []; let guessed = []; let alert = ''; let guess;
         let sent; let lastSent;
 
         while (word.some(w => !w.guessed) && lives > 0) {
 
-            sent = await message.channel.send(alert, { embed: {
+            sent = await message.channel.send(alert, { files: [{ attachment: await hangmanImage(lives), name: 'hangman.png' }], embed: {
                 title: 'HANGMAN',
                 description: 'Type a letter to guess',
                 fields: [
@@ -106,6 +158,9 @@ class HangmanCommand extends Command {
                 ],
                 footer: {
                     text: `LIVES: ${lives}`
+                },
+                image: {
+                    url: 'attachment://hangman.png'
                 }
             }});
             lastSent ? lastSent.delete() : null;
@@ -142,7 +197,7 @@ class HangmanCommand extends Command {
             };
         };
 
-        if (lives === 0) return message.channel.send({ embed: {
+        if (lives === 0) return message.channel.send({ files: [{ attachment: await hangmanImage(lives), name: 'hangman.png' }], embed: {
             title: 'LOSER',
             description: 'You have been hung. You died.',
             color: this.client.config.colors.red,
@@ -159,7 +214,10 @@ class HangmanCommand extends Command {
                     name: 'INCORRECT GUESSES',
                     value: incorrect.length > 0 ? incorrect.join(' ') : '\u200b'
                 }
-            ]
+            ],
+            image: {
+                url: 'attachment://hangman.png'
+            }
         }}); 
         else return message.channel.send({ embed: {
             title: 'WINNER',

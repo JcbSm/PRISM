@@ -80,9 +80,9 @@ class SetCoundCommand extends Command {
                     }})
                 });
 
-                client.db.query(`UPDATE members SET counting_counts = counting_counts/${ratio} WHERE guild_id = ${message.guild.id}`, (err, res) => {
-                    console.log(err, res)
-                })
+                // client.db.query(`UPDATE members SET counting_counts = counting_counts/${ratio} WHERE guild_id = ${message.guild.id}`, (err, res) => {
+                //     console.log(err, res)
+                // })
             });
         
         } else {

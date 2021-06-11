@@ -360,7 +360,7 @@ class BotClient extends AkairoClient {
     get backgroundsImage() {
         return this._backgroundsImage()
     };
-
+    
 };
 
 const client = new BotClient();

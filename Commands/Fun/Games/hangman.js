@@ -86,7 +86,7 @@ class HangmanCommand extends Command {
 
         if (!word) return message.reply({ embed: { description: '`ERROR: Word missing`'}})
 
-        let lives = 2; let incorrect = []; let guessed = []; let alert = ''; let guess;
+        let lives = 11; let incorrect = []; let guessed = []; let alert = ''; let guess;
         let sent; let lastSent;
 
         while (word.some(w => !w.guessed) && lives > 0) {

@@ -8,7 +8,7 @@ const commandInfo = commandOptions({
     aliases: ['hm'],
     description: {
         content: 'Starts a game of hangman',
-        usage: ['', 'multiplayer']
+        usage: ['', 'custom']
     },
     channel: 'unknown',
     typing: false,
@@ -25,7 +25,7 @@ class HangmanCommand extends Command {
 
         let multiplayer = yield {
             type: [
-                ['MULTIPLAYER', 'MP', 'MTP', 'TRUE']
+                ['CUSTOM', 'TRUE']
             ]
         };
 
@@ -126,9 +126,10 @@ class HangmanCommand extends Command {
 
         if (multiplayer) {
             try {
+                await message.reply('DM the bot your word.');
                 await message.author.send(`Send the hangman word here.`);
                 word = parseWord((await message.author.dmChannel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 30*1000 })).first().content.toUpperCase());
-                await message.author.send('Starting...')
+                await message.author.send('Starting...', {embed: {title: 'BACK', url: message.url}})
             } catch {
                 word = parseWord(randWord());
             };
@@ -138,8 +139,8 @@ class HangmanCommand extends Command {
 
         if (!word) return message.reply({ embed: { description: '`ERROR: Word missing`'}})
 
-        let lives = 10; let incorrect = []; let guessed = []; let alert = ''; let guess;
-        let sent; let lastSent;
+        let lives = 10; let incorrect = []; let guessed = []; let alert = ''; let guess; let winner;
+        let sent; //let lastSent;
 
         while (word.some(w => !w.guessed) && lives > 0) {
 
@@ -157,25 +158,37 @@ class HangmanCommand extends Command {
                     }
                 ],
                 footer: {
-                    text: `LIVES: ${lives}`
+                    text: `LIVES: ${lives} | Type 'guess: <word>' to guess the whole word.`
                 },
                 image: {
                     url: 'attachment://hangman.png'
                 },
                 color: message.guild ? await this.client.config.colors.embed(message.guild) : null
             }});
-            lastSent ? lastSent.delete() : null;
-            lastSent = sent;
+            // lastSent ? lastSent.delete() : null;
+            // lastSent = sent;
 
             // Fetch the guess
+            let filter = m => /^[A-Z]{1}$/i.test(m.content) || /^(GUESS: ).+$/i.test(m.content)
+            let msg = (await message.channel.awaitMessages(filter, { max: 1, time: 20*1000})).first();
 
-            let msg = (await message.channel.awaitMessages(m => /^[A-Z]{1}$/i.test(m.content), { max: 1, time: 20*1000})).first();
+            if (msg) {
+                if (msg.content.toUpperCase() === `GUESS: ${word.map(w => w.char).join('')}`) {
+                    winner = msg.member;
+                    break;
+                }
+            }
+
             guess = msg ? msg.content.toUpperCase() : null;
 
             // Check not already guessed.
 
             if (!guess) {
                 alert = 'Nobody guessed...'
+                lives--;
+                continue;
+            } else if (!/^[A-Z]{1}$/i.test(msg.content)) {
+                alert = `**${msg.member.displayName}** guessed the word incorrectly.`
                 lives--;
                 continue;
             } else if (guessed.includes(guess) || incorrect.includes(guess)) {
@@ -220,7 +233,7 @@ class HangmanCommand extends Command {
                 url: 'attachment://hangman.png'
             }
         }}); 
-        else return message.channel.send({ embed: {
+        else return message.channel.send(winner ? `${winner} correctly guessed the word!` : '', { embed: {
             title: 'WINNER',
             description: 'You correctly guessed! You live another day.',
             color: this.client.config.colors.green,
@@ -228,10 +241,6 @@ class HangmanCommand extends Command {
                 {
                     name: 'WORD',
                     value: `${word.map(w => w.char).join('')}`
-                },
-                {
-                    name: 'CORRECT GUESSES',
-                    value: guessed.length > 0 ? guessed.join(' ') : '\u200b'
                 },
                 {
                     name: 'INCORRECT GUESSES',
@@ -242,4 +251,4 @@ class HangmanCommand extends Command {
     };
 };
 
-//module.exports = HangmanCommand;
+module.exports = HangmanCommand;

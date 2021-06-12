@@ -161,7 +161,8 @@ class HangmanCommand extends Command {
                 },
                 image: {
                     url: 'attachment://hangman.png'
-                }
+                },
+                color: message.guild ? await this.client.config.colors.embed(message.guild) : null
             }});
             lastSent ? lastSent.delete() : null;
             lastSent = sent;
@@ -241,4 +242,4 @@ class HangmanCommand extends Command {
     };
 };
 
-module.exports = HangmanCommand;
+//module.exports = HangmanCommand;

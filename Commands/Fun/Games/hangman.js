@@ -171,7 +171,7 @@ class HangmanCommand extends Command {
 
             // Fetch the guess
             let filter = m => /^[A-Z]{1}$/i.test(m.content) || /^(GUESS: ).+$/i.test(m.content)
-            let msg = (await message.channel.awaitMessages(filter, { max: 1, time: 20*1000})).first();
+            let msg = (await message.channel.awaitMessages(filter, { max: 1, time: 45*1000})).first();
 
             if (msg) {
                 if (msg.content.toUpperCase() === `GUESS: ${word.map(w => w.char).join('')}`) {

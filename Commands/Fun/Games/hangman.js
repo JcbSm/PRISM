@@ -126,10 +126,11 @@ class HangmanCommand extends Command {
 
         if (multiplayer) {
             try {
-                await message.reply('DM the bot your word.');
+                let temp = await message.reply('DM the bot your word.');
                 await message.author.send(`Send the hangman word here.`);
                 word = parseWord((await message.author.dmChannel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 30*1000 })).first().content.toUpperCase());
                 await message.author.send('Starting...', {embed: {title: 'BACK', url: message.url}})
+                await temp.delete();
             } catch {
                 word = parseWord(randWord());
             };
@@ -140,7 +141,7 @@ class HangmanCommand extends Command {
         if (!word) return message.reply({ embed: { description: '`ERROR: Word missing`'}})
 
         let lives = 10; let incorrect = []; let guessed = []; let alert = ''; let guess; let winner;
-        let sent; //let lastSent;
+        let sent; let lastSent;
 
         while (word.some(w => !w.guessed) && lives > 0) {
 
@@ -165,8 +166,8 @@ class HangmanCommand extends Command {
                 },
                 color: message.guild ? await this.client.config.colors.embed(message.guild) : null
             }});
-            // lastSent ? lastSent.delete() : null;
-            // lastSent = sent;
+            lastSent ? lastSent.delete() : null;
+            lastSent = sent;
 
             // Fetch the guess
             let filter = m => /^[A-Z]{1}$/i.test(m.content) || /^(GUESS: ).+$/i.test(m.content)

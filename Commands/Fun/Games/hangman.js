@@ -37,6 +37,8 @@ class HangmanCommand extends Command {
 
     async exec(message, { multiplayer }) {
 
+        registerFont('./Assets/Fonts/impact.ttf', {family: 'impact'})
+
         function randWord() {
             let data = fs.readFileSync('./Commands/Fun/Games/words.txt', {encoding: 'utf8'});
             let words = data.replace(/\r/gi, '').split('\n')

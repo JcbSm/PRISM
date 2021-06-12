@@ -121,7 +121,7 @@ class HangmanCommand extends Command {
             ctx.stroke();
 
             if (lives === 0) {
-                let str = 'RIP'
+                let str = 'RIP.'
                 ctx.font = `${canvas.height/3}px "impact"`;
                 ctx.strokeStyle = '#000'; ctx.lineWidth = lineWidth*1.5
                 ctx.strokeText(str, canvas.width/1.8, 3*canvas.height/5);

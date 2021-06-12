@@ -1,6 +1,6 @@
 const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
-const { createCanvas } = require('canvas');
+const { createCanvas, registerFont } = require('canvas');
 const fs = require('fs')
 
 const commandInfo = commandOptions({

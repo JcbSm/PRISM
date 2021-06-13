@@ -2,8 +2,8 @@ const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
-    id: 'connect4',
-    aliases: ['knect4', 'c4'],
+    id: 'connect',
+    aliases: ['connect4', 'knect4', 'c4'],
     description: {
         usage: ['[opponent]'],
         content: 'Play connect 4 against another person.'
@@ -14,7 +14,7 @@ const commandInfo = commandOptions({
     userPermissions: ['SEND_MESSAGES']
 }, __dirname);
 
-class Connect4Command extends Command {
+class ConnectCommand extends Command {
     constructor() {
         super(commandInfo.id, commandInfo);
     };
@@ -348,4 +348,4 @@ class Connect4Command extends Command {
     };
 };
 
-module.exports = Connect4Command;
+module.exports = ConnectCommand;

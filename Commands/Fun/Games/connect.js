@@ -244,7 +244,7 @@ class ConnectCommand extends Command {
 
         // Asking the opponent if they would like to play.
 
-        let request = await message.channel.send(`${opponent}, you have been challenged to Connect 4 by ${message.member}`, { embed: {
+        let request = await message.channel.send(`${opponent}, you have been challenged to Connect by ${message.member}`, { embed: {
             description: 'Type **Y/N** to accept or decline',
             color: await this.client.config.colors.embed(message.guild),
         }})
@@ -289,7 +289,7 @@ class ConnectCommand extends Command {
         while(gamestate === 0) {
 
             await message.channel.send({ embed: {
-                title: 'CONNECT 4',
+                title: 'CONNECT',
                 description: `${displayGrid(grid)}\n\u200b`,
                 fields: [
                     {

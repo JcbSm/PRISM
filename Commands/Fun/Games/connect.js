@@ -5,7 +5,7 @@ const commandInfo = commandOptions({
     id: 'connect',
     aliases: ['connect4', 'knect4', 'c4'],
     description: {
-        usage: ['[opponent]'],
+        usage: ['[opponent]', '[opponent] (rows) (columns) (goal)'],
         content: 'Play connect 4 against another person.'
     },
     channel: 'guild',
@@ -36,12 +36,35 @@ class ConnectCommand extends Command {
             default: 6
         }
 
-        return { opponent };
+        const count = yield {
+            type: 'int',
+            default: 4
+        }
+
+        return { opponent, x, y, count };
     };
 
     async exec(message, args) {
 
-        let client = this.client; let opponent = args.opponent;
+        if (args.x * args.y > 180) return message.reply('Grid is too large. Max cells: 180')
+
+        let opponent = args.opponent;
+
+        function genGrid(x,y) {
+
+                // Simply generates a 2D array of given dimensions
+
+            let arr = new Array(y);
+            for (let iy = 0; iy < y; iy++) {
+                let row = []
+                for (let i = 0; i < x; i++) {
+                    row.push(0)
+                };
+                arr[iy] = row
+            };
+
+            return arr
+        };
 
         function displayGrid(grid) {
 
@@ -105,9 +128,9 @@ class ConnectCommand extends Command {
                 };
             };
 
-                console.log(`Horizontal count: ${counter}`);
+                //console.log(`Horizontal count: ${counter}`);
 
-            if (counter >= 4) {
+            if (counter >= args.count) {
                 return true; // Win
             } else {
                 counter = 1; // Reset counter if no horizontal win.
@@ -129,9 +152,9 @@ class ConnectCommand extends Command {
                 }
             };
 
-                console.log(`Vertical count: ${counter}`);
+                //console.log(`Vertical count: ${counter}`);
 
-            if (counter >= 4) {
+            if (counter >= args.count) {
                 return true; // Win
             } else {
                 counter = 1; // Reset counter if no vertical win.
@@ -171,9 +194,9 @@ class ConnectCommand extends Command {
                 newCell = newCell.map(i => i + 1);
             };
 
-                console.log(`Negative diag count: ${counter}`)
+                //console.log(`Negative diag count: ${counter}`)
 
-            if (counter >= 4) {
+            if (counter >= args.count) {
                 return true; // Win
             } else {
                 counter = 1; // Reset counter if no win.
@@ -186,7 +209,6 @@ class ConnectCommand extends Command {
             newCell = [cell[0] - 1, cell[1] + 1];
 
             while (newCell[0] >= 0 && newCell[1] < grid.length) {
-                console.log(grid[newCell[1]][newCell[0]])
                 if (grid[newCell[1]][newCell[0]] === playerID) {
                     counter ++;
                 } else {
@@ -208,9 +230,9 @@ class ConnectCommand extends Command {
                 newCell = [newCell[0] + 1, newCell[1] - 1];
             }
 
-                console.log(`Positive diag count: ${counter}`)
+                //console.log(`Positive diag count: ${counter}`)
 
-            if (counter >= 4) {
+            if (counter >= args.count) {
                 return true; // Win
             } else {
                 counter = 1; // Reset counter if no win.
@@ -246,19 +268,12 @@ class ConnectCommand extends Command {
             return message.reply('Your opponent never answered...')
         };
     
-            // Generate playing grid. To be replaced with optional paraemeters
+            // Generate playing grid.
             // 0 = Empty
             // 1 = Player 1
             // 2 = Player 2
 
-        let grid = [
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0]
-        ];
+        let grid = genGrid(args.x, args.y)
 
             // gamestate
             // 0 = Playing
@@ -279,10 +294,16 @@ class ConnectCommand extends Command {
                 fields: [
                     {
                         name: 'CURRENT TURN',
-                        value: `${['🟡', '🔴'][turn]} • ${players[turn]}\n\u200b`
+                        value: `${['🟡', '🔴'][turn]} • ${players[turn]}\n\u200b`,
+                        inline: true
+                    },
+                    {
+                        name: 'GOAL',
+                        value: `\`${args.count}\``,
+                        inline: true
                     }
                 ],
-                color: await client.config.colors.embed(message.guild),
+                color: await this.client.config.colors.embed(message.guild),
                 footer: {
                     text: 'Type \'quit\' to forfeit the game.'
                 }
@@ -332,6 +353,21 @@ class ConnectCommand extends Command {
             if (win) {
                 gamestate = turn + 1;
                 break;
+            } else {
+                
+                    // Check for a tie (all cells filled up)
+                    // Check if top row is full
+                    // Cutting corners, yes.
+                let tie = true
+                grid[0].forEach(cell => {
+                    if (cell === 0) {
+                        tie = false
+                    }
+                })
+                if(tie) {
+                    gamestate = 3;
+                    break;
+                }
             };
             
             turn = turn === 0 ? 1 : 0; // Switch turn

@@ -16,7 +16,9 @@ class WhitelistAddListener extends Listener {
 
         const { mc_username, mc_username_url } = (await this.client.db.query(`SELECT mc_username, mc_username_url FROM members WHERE user_id = ${message.author.id} AND guild_id = ${message.guild.id}`)).rows[0];
 
-        if (mc_username.toLowerCase() === username.toLowerCase()) return message.delete();
+        if (mc_username) {
+            if (mc_username.toLowerCase() === username.toLowerCase()) return message.delete();
+        };
 
         if (mc_username_url) {
             let old = await this.client.functions.resolveMessage(mc_username_url);

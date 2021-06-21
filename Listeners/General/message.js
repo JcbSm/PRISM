@@ -24,6 +24,10 @@ class MessageListener extends Listener {
             } else if(!message.author.bot) {
                 this.client.emit('xp-message', message)
                 this.client.emit('stats-message', message)
+
+                if (message.channel.name === 'whitelist') {
+                    this.client.emit('whitelist-add', message);
+                };
             };
 
             const guildData = (await this.client.db.query(`SELECT * FROM guilds WHERE guild_id = ${message.guild.id}`)).rows[0];

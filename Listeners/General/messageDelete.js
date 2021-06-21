@@ -9,6 +9,8 @@ class MessageDeleteListener extends Listener {
     };
 
     async exec(message) {
+
+        if (message.partial) return;
         
         if(!message.author.bot) {
             this.client.emit('log-messageDelete', message)

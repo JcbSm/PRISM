@@ -79,6 +79,7 @@ class LevelsCommand extends Command {
             };
 
             let start = 10 * (page - 1); let end = 10 * page;
+            console.log(page, start, end)
             let pageMembers = newMembers.splice(start, end);
 
             let i = start; let arr = []; let mention;

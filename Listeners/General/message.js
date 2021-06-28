@@ -25,7 +25,7 @@ class MessageListener extends Listener {
                 this.client.emit('xp-message', message)
                 this.client.emit('stats-message', message)
 
-                if (message.channel.name === 'whitelist') {
+                if (message.channel.name === 'whitelist' && message.guild.id === '447504770719154192') {
                     this.client.emit('whitelist-add', message);
                 };
             };

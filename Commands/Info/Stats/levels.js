@@ -88,9 +88,10 @@ class LevelsCommand extends Command {
                     mention = await message.guild.members.fetch(member.user_id);
                 } catch (error) {
                     try{
-                        mention = (await this.client.users.fetch(member.user_id)).tag;
-                    } catch {
-                        mention = '`Unknown User`';
+                        mention = (await client.users.fetch(member.user_id)).tag;
+                    } catch (error) {
+                        console.error(error)
+                        mention = '`Deleted User`';
                     };
                 };
                 arr.push(`\`${pad(i+1, 2)}.\`• \`Lvl [${pad(levelCalc(member.xp), 2)}]\` • ${mention} • \`${groupDigits(member.xp)} xp\``)

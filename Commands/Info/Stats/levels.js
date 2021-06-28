@@ -78,9 +78,8 @@ class LevelsCommand extends Command {
                 color: await client.config.colors.embed(message.guild)
             };
 
-            let start = 10 * (page - 1); let end = 10 * page;
-            console.log(page, start, end)
-            let pageMembers = newMembers.splice(start, end);
+            let start = 10 * (page - 1);
+            let pageMembers = newMembers.splice(start, 10);
 
             let i = start; let arr = []; let mention;
 
@@ -145,7 +144,6 @@ class LevelsCommand extends Command {
         });
         
         collector.on('end', async () => {
-            console.log('Removing')
             try {
                 await sent.reactions.removeAll();
             } catch (error) {

@@ -35,15 +35,17 @@ class LevelsCommand extends Command {
 
     async exec(message, args) {
         
-        const { levelCalc, pad, groupDigits } = this.client.functions;       
+        let client = this.client;
+        const { pad, groupDigits, levelCalc } = this.client.functions;    
 
-        const members = (await this.client.db.query(`SELECT user_id, xp FROM members WHERE guild_id = ${message.guild.id} AND xp > 0`)).rows;
+        let members = (await this.client.db.query(`SELECT user_id, xp FROM members WHERE guild_id = ${message.guild.id} AND xp > 0`)).rows;
 
         members.sort((a, b) => b.xp - a.xp);
 
-        let arr = [];
-        let [mention, start, end, page] = [null, 0, 0, null];
+        let page;
+        let maxPage = Math.ceil(members.length / 10);
 
+        // Parse page
         if(args.type === 'string') {
 
             let member = this.client.util.resolveMember(args.page, message.guild.members.cache);
@@ -62,35 +64,94 @@ class LevelsCommand extends Command {
             } else {
                 page = 1
             }
+
         } else {
-            page = args.page
+            page = args.page <= maxPage ? args.page : 1;
         }
 
-        start += 10*(page-1); end += (10*(page))-1;
-        if(start > members.length) return message.reply('No data.')
-        if(end >= members.length-1) end = members.length-1;
+        async function generateEmbed(page) {
 
-        for(let i = start; i <= end; i++) {
-            if(i >= members.length) break;
-            try{
-                mention = await message.guild.members.fetch(members[i].user_id);
-            } catch(error) {
-                try{
-                    mention = (await this.client.users.fetch(members[i].user_id)).tag;
-                } catch {
-                    mention = '`Deleted User`'
-                }            }
-            arr.push(`\`${pad(i+1, 2)}.\`• \`Lvl [${pad(this.client.functions.levelCalc(members[i].xp), 2)}]\` • ${mention} • \`${groupDigits(members[i].xp)} xp\``);
+            let newMembers = [...members]; // Avoid mutation when splicing
+
+            let embed = {
+                title: `${message.guild.name.toUpperCase()} LEADERBOARD`,
+                color: await client.config.colors.embed(message.guild)
+            };
+
+            let start = 10 * (page - 1); let end = 10 * page;
+            let pageMembers = newMembers.splice(start, end);
+
+            let i = start; let arr = []; let mention;
+
+            for (const member of pageMembers) {
+                try {
+                    mention = await message.guild.members.fetch(member.user_id);
+                } catch (error) {
+                    try{
+                        mention = (await this.client.users.fetch(member.user_id)).tag;
+                    } catch {
+                        mention = '`Unknown User`';
+                    };
+                };
+                arr.push(`\`${pad(i+1, 2)}.\`• \`Lvl [${pad(levelCalc(member.xp), 2)}]\` • ${mention} • \`${groupDigits(member.xp)} xp\``)
+                i++;
+            };
+
+            embed.description = arr.join('\n');
+            embed.footer = {
+                text: `Page: ${page} of ${maxPage}`
+            }
+
+            return embed
+
         };
 
-        message.channel.send({ embed: {
-            title: `${message.guild.name.toUpperCase()} LEADERBOARD`,
-            description: arr.join('\n'),
-            footer: {
-                text: `Page ${page} | ${start+1} - ${end+1} of ${members.length}`
-            },
-            color: await this.client.config.colors.embed(message.guild)
-        }})
+        let sent = await message.channel.send({ embed: await generateEmbed(page)});
+
+        await sent.react('⬆️');
+        await sent.react('⬇️');
+
+        const filter = (reaction, user) => {
+            return reaction.emoji.name === '⬆️' || reaction.emoji.name === '⬇️' && user.id === message.author.id;
+        };
+
+        const collector = sent.createReactionCollector(filter, { time: 60 * 1000});
+        
+        collector.on('collect', async (reaction, user) => {
+            let newPage = page
+            if (reaction.emoji.name === '⬆️') {
+                newPage -= 1;
+
+                if (newPage > 0) {
+                    page = newPage;
+                    await sent.edit({ embed: await generateEmbed(page)});
+                    await reaction.users.remove(user.id);
+                } else {
+                    reaction.users.remove(user.id);
+                }
+
+            } else if (reaction.emoji.name === '⬇️') {
+                newPage += 1
+
+                if (newPage <= maxPage) {
+                    page = newPage;
+                    await sent.edit({ embed: await generateEmbed(page)});
+                    await reaction.users.remove(user.id);
+                } else {
+                    await reaction.users.remove(user.id);
+                }
+            }
+        });
+        
+        collector.on('end', async () => {
+            console.log('Removing')
+            try {
+                await sent.reactions.removeAll();
+            } catch (error) {
+                console.error(error)
+            }
+        });
+
     };
 };
 

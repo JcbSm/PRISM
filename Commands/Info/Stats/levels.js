@@ -111,9 +111,10 @@ class LevelsCommand extends Command {
 
         await sent.react('⬆️');
         await sent.react('⬇️');
+        sent.react('❌')
 
         const filter = (reaction, user) => {
-            return reaction.emoji.name === '⬆️' || reaction.emoji.name === '⬇️' && user.id === message.author.id;
+            return reaction.emoji.name === '⬆️' || reaction.emoji.name === '⬇️' || reaction.emoji.name === '❌' && user.id === message.author.id;
         };
 
         const collector = sent.createReactionCollector(filter, { time: 60 * 1000});
@@ -141,6 +142,8 @@ class LevelsCommand extends Command {
                 } else {
                     await reaction.users.remove(user.id);
                 }
+            } else if (reaction.emoji.name === '❌') {
+                collector.emit('end')
             }
         });
         

@@ -45,29 +45,36 @@ class LevelsCommand extends Command {
         let page;
         let maxPage = Math.ceil(members.length / 10);
 
-        // Parse page
-        if(args.type === 'string') {
+        function parsePage(str) {
 
-            let member = this.client.util.resolveMember(args.page, message.guild.members.cache);
+            if (!isNaN(Number(str))) {
+                page = Math.floor(str) <= maxPage ? Math.floor(str) : 1;
+            } else {
 
-            if(member) {
+                let member = client.util.resolveMember(str, message.guild.members.cache);
 
-                let index = members.findIndex(m => m.user_id === member.id)
-                if(index >= 0 && index < members.length) {
+                if(member) {
 
-                    console.log(index)
-                    page = Math.ceil((index+1)/10)
+                    let index = members.findIndex(m => m.user_id === member.id)
+                    if(index >= 0 && index < members.length) {
+
+                        page = Math.ceil((index+1)/10)
+                    } else {
+                        page = 1
+                    }
+            
                 } else {
                     page = 1
                 }
-        
-            } else {
-                page = 1
-            }
 
-        } else {
-            page = args.page <= maxPage ? args.page : 1;
-        }
+            };
+
+            return page;
+
+        };
+
+        // Parse page
+        page = parsePage(args.page);
 
         async function generateEmbed(page) {
 
@@ -109,12 +116,10 @@ class LevelsCommand extends Command {
 
         let sent = await message.channel.send({ embed: await generateEmbed(page)});
 
-        await sent.react('⬆️');
-        await sent.react('⬇️');
-        sent.react('❌')
+        let emojis = ['⬆️', '⬇️', '❌'];
 
         const filter = (reaction, user) => {
-            return reaction.emoji.name === '⬆️' || reaction.emoji.name === '⬇️' || reaction.emoji.name === '❌' && user.id === message.author.id;
+            return emojis.includes(reaction.emoji.name) && user.id === message.author.id;
         };
 
         const collector = sent.createReactionCollector(filter, { time: 60 * 1000});
@@ -154,6 +159,10 @@ class LevelsCommand extends Command {
                 console.error(error)
             }
         });
+
+        await sent.react('⬆️');
+        await sent.react('⬇️');
+        await sent.react('❌');
 
     };
 };

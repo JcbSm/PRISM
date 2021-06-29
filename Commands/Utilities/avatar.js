@@ -34,7 +34,7 @@ class AvatarCommand extends Command {
 
     async exec(message, { user }) {
 
-        message.channel.send({ embed: {
+        return message.channel.send({ embed: {
             footer: {
                 text: user.tag
             },

@@ -126,7 +126,7 @@ class ChessCommand extends Command {
         } else if (res.emoji.name === '❌') { // If the opponent declines.
             ask.delete();
             return message.reply('Your opponent declined.')
-        }
+        };
 
         // Else, Carry on!
 
@@ -143,10 +143,12 @@ class ChessCommand extends Command {
 
             get takenPieces() {
 
+                console.log("Finding pieces")
+
                 // THe pieces that each player will start with.
                 const startingPieces = [
 
-                    2,
+                    1, 2,
                     3, 3,
                     4, 4,
                     5, 5,
@@ -158,16 +160,18 @@ class ChessCommand extends Command {
                 ];
 
                 let white = [...startingPieces]; let black = [...startingPieces]; // Copy array
-
+                console.log(black)
                 this.squares.forEach(p => { // Loop over all squares
 
                     if (!p) return;
 
                     if (p.colorInt) { // Black
-
+                        console.log(p.type)
                         // If there is a piece on the baord, remove that piece from the taken pieces array
-                        let i = black.indexOf(p.typeInt);
+                        let i = black.indexOf(p.typeInt); 
+                        console.log(i)
                         black.splice(i, 1);
+                        console.log(black)
 
                     } else { // White
 
@@ -526,18 +530,21 @@ class ChessCommand extends Command {
                         if (swappable.length > 0) {
                             
                             let names = ['queen', 'bishop', 'knight', 'rook']
+                            
+                            // Neat trick to map current swappables by the name :D
                             await message.channel.send(`What would you like to promote to:\n**${swappable.map(p => names[p - 2].toUpperCase()).join(', ')}**`);
 
                             let promotionChoice;
                             
                             try {
+                                
                                 let filter = m => {
                                     return m.author.id === this.game.players[this.game.state.turn].member.id && swappable.map(p => names[p - 2]).includes(m.content.toLowerCase())
                                 };
 
                                 promotionChoice = names.indexOf((await message.channel.awaitMessages(filter, { max: 1, time: 15000, errors: ['time'] })).first().content.toLowerCase()) + 2
 
-                            } catch {
+                            } catch { // It will catch if time runs out, defaulting to the "most powerful" piece.
                                 promotionChoice = swappable[0];
                             };
 
@@ -553,6 +560,7 @@ class ChessCommand extends Command {
                         
                         if (swappable.length > 0) {
                             
+                            // Same as above, just for white
                             let names = ['queen', 'bishop', 'knight', 'rook']
                             await message.channel.send(`What would you like to promote to:\n**${swappable.map(p => names[p - 2].toUpperCase()).join(', ')}**`);
 

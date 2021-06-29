@@ -5,7 +5,7 @@ const commandInfo = commandOptions({
     id: 'levels',
     aliases: ['levelstop', 'ranks'],
     channel: 'guild',
-    typing: true,
+    typing: false,
     description: {
         usage: ['(page)', '(member)'],
         content: 'View the levels leaderboard for a server.'

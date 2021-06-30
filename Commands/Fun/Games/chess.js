@@ -143,8 +143,6 @@ class ChessCommand extends Command {
 
             get takenPieces() {
 
-                console.log("Finding pieces")
-
                 // THe pieces that each player will start with.
                 const startingPieces = [
 
@@ -160,18 +158,17 @@ class ChessCommand extends Command {
                 ];
 
                 let white = [...startingPieces]; let black = [...startingPieces]; // Copy array
-                console.log(black)
+
                 this.squares.forEach(p => { // Loop over all squares
 
                     if (!p) return;
 
                     if (p.colorInt) { // Black
-                        console.log(p.type)
+
                         // If there is a piece on the baord, remove that piece from the taken pieces array
                         let i = black.indexOf(p.typeInt); 
-                        console.log(i)
                         black.splice(i, 1);
-                        console.log(black)
+
 
                     } else { // White
 
@@ -251,7 +248,6 @@ class ChessCommand extends Command {
 
                 // For all the moves that go left
                 // check it doesnt loop around the left of the board.
-                let c = 1
 
                 movesL.forEach(m => {
                     target = this.getFileRank(kingSquare + m);
@@ -297,10 +293,14 @@ class ChessCommand extends Command {
                 for (let i = kingSquare + 8; this.getFileRank(i).rank < 8; i += 8) {
 
                     if (!squares[i]) continue; // Empty, next square
-
+                    
                     if (squares[i].colorInt === colorInt) {
 
                         break; // Own piece blocking
+                    
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
                     } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8))) {
                         // If different color AND
@@ -321,6 +321,10 @@ class ChessCommand extends Command {
 
                         break; // Own piece blocking
 
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 8))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -338,6 +342,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 1))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -355,6 +363,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 1))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -371,6 +383,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -388,6 +404,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 7))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -405,6 +425,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 9))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
@@ -422,6 +446,10 @@ class ChessCommand extends Command {
 
                     if (squares[i].colorInt === colorInt) {
                         break; // Own piece blocking
+                    } else if (squares[i].typeInt === 6 && squares[i].colorInt !== colorInt) {
+
+                        break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
+
                     } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 7))) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below

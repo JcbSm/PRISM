@@ -59,7 +59,7 @@ class HandgrabCommand extends Command {
         message.delete();
 
         try {
-            await message.channel.awaitMessages(m => !m.author.bot, {max: 1, time: 60000, errors: ['time'] });
+            await message.channel.awaitMessages(m => !m.author.bot, {max: 1, time: 600000, errors: ['time'] });
             await top.edit(url.top);
             return await message.channel.send(new MessageAttachment(url.bottom, 'bottom.png'));
         } catch (e) {

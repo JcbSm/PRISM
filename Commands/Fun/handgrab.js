@@ -11,7 +11,7 @@ const commandInfo = commandOptions({
     },
     channel: 'guild',
     typing: false,
-    clientPermissions: ['SEND_MESSAGES', 'ATTACH_FILES'],
+    clientPermissions: ['SEND_MESSAGES', 'EMBED_MESSAGES'],
     userPermissions: ['SEND_MESSAGES']
 }, __dirname);
 
@@ -54,12 +54,13 @@ class HandgrabCommand extends Command {
 
         let url = urls[args.type];
 
-        let top = await message.channel.send(new MessageAttachment(url.top, 'top.png'));
+        let top = await message.channel.send('\u200b');
 
         message.delete();
 
         try {
             await message.channel.awaitMessages(m => !m.author.bot, {max: 1, time: 60000, errors: ['time'] });
+            await top.edit(url.top);
             return await message.channel.send(new MessageAttachment(url.bottom, 'bottom.png'));
         } catch (e) {
             return top.delete();

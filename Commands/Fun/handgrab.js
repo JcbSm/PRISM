@@ -11,7 +11,7 @@ const commandInfo = commandOptions({
     },
     channel: 'guild',
     typing: false,
-    clientPermissions: ['SEND_MESSAGES', 'EMBED_MESSAGES'],
+    clientPermissions: ['SEND_MESSAGES', 'EMBED_MESSAGES', 'ATTACH_FILES'],
     userPermissions: ['SEND_MESSAGES']
 }, __dirname);
 

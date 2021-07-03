@@ -302,10 +302,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space above
-                        check = true;
+                        check = [2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8);
                         break;
                     };
                 };
@@ -325,10 +325,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 8))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8);
                         break;
                     };
                 };
@@ -346,10 +346,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 1))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8);
                         break;
                     };
                 };
@@ -367,10 +367,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 1))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 5].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 8);
                         break;
                     };
                 };
@@ -387,10 +387,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9);
                         break;
                     };
                 }
@@ -408,10 +408,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 7))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9);
                         break;
                     };
                 }
@@ -429,10 +429,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare - 9))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9);
                         break;
                     };
                 }
@@ -450,10 +450,10 @@ class ChessCommand extends Command {
 
                         break; // Pawn blocking (If the pawn is putting the king in check it would have already been found earlier and returned)
 
-                    } else if (squares[i].colorInt !== colorInt && ([2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 7))) {
+                    } else if (squares[i].colorInt !== colorInt) {
                         // If different color AND
                         // Either rook/queen OR king 1 space below
-                        check = true;
+                        check = [2, 3].includes(squares[i].typeInt) || (squares[i].typeInt === 1 && i === kingSquare + 9);
                         break;
                     };
                 }

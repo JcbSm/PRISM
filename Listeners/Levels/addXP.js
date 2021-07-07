@@ -22,11 +22,11 @@ class XpAddListener extends Listener {
         if(type === 'message') {
             xp = Math.round(this.client.functions.rng(3*multiplier, 7*multiplier));
             checkLevel(xp, member);
-            await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)
+            await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`); console.log(`Added xp to ${member.displayName}`)
         } else if(type === 'voice') {
             xp = Math.round(5*multiplier);
             checkLevel(xp, member);
-            await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`)
+            await this.client.db.query(`UPDATE members SET xp = xp + ${xp} WHERE user_id = ${member.id} AND guild_id = ${member.guild.id}`); console.log(`Added xp to ${member.displayName}`)
         }
     };
 };

@@ -20,7 +20,7 @@ class ResponderCommand extends Command {
         super(commandInfo.id, commandInfo);
     };
 
-    async *args(message) {
+    async * args(message) {
 
         const { prompt } = this.client.functions;
 

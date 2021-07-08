@@ -106,7 +106,9 @@ class BotClient extends AkairoClient {
         this.commandHandler.loadAll();
         this.listenerHandler.loadAll();
         this.inhibitorHandler.loadAll();
-        console.log('Modules lodaded');
+        console.log(`Loaded ${this.commandHandler.modules.size} commands, ${this.listenerHandler.modules.size} listeners, ${this.inhibitorHandler.modules.size} inhibitors`);
+
+        // Check no duplicate command IDs.
 
         this.db = db; this.testing = testing;
     };

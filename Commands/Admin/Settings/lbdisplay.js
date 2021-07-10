@@ -2,8 +2,8 @@ const { Command } = require('discord-akairo');
 const { commandOptions } = require('../../../index');
 
 const commandInfo = commandOptions({
-    id: 'leaderboarddisplay',
-    aliases: ['lbdisplay', 'servertopdisplay'],
+    id: 'lbdisplay',
+    aliases: ['leaderboarddisplay', 'servertopdisplay'],
     description: {
         usage: ['[normal|anonymous|none]'],
         content: 'Set whether or not to appear on -servertop commands.'

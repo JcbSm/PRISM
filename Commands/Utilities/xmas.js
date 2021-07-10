@@ -3,8 +3,8 @@ const { min } = require('moment');
 const { commandOptions } = require('../../index');
 
 const commandInfo = commandOptions({
-    id: 'christmas',
-    aliases: ['xmas', 'howfarawayisnextchristmas'],
+    id: 'xmas',
+    aliases: ['christmas', 'howfarawayisnextchristmas'],
     description: {
         usage: [''],
         content: 'See how far away christmas is.'

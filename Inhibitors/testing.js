@@ -10,6 +10,7 @@ class TestingInhibitor extends Inhibitor {
     exec(message) {
 
         return (this.client.testing && message.guild.id !== '569556194612740115' && message.author.id !== this.client.ownerID);
+        
     };
 };
 
